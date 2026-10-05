@@ -4,12 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#102e38">
-<title>SR Atlas — Live shop map</title>
+<title>SR Atlas</title>
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
@@ -17,14 +15,13 @@
   color:#15333e;
   background:#f3f7f6;
   --green:#087f72;
-  --ink:#102e38;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0}
 button,input{font:inherit}
-button,a.btn{cursor:pointer;border:0}
-button:disabled{opacity:.45;cursor:wait}
+button{cursor:pointer;border:0}
+button:disabled{opacity:.45;cursor:default}
 .btn{
   padding:12px 16px;
   border-radius:13px;
@@ -34,24 +31,62 @@ button:disabled{opacity:.45;cursor:wait}
   text-decoration:none;
   text-align:center;
 }
-.primary{background:var(--green);color:#fff}
+.primary{background:#087f72;color:#fff}
 .danger{background:#fff0f1;color:#b5384a}
 .icon{
   height:45px;
   min-width:45px;
   border-radius:14px;
   background:white;
+  color:#15333e;
   font-size:22px;
   box-shadow:0 4px 20px #12353c20;
 }
 .view{display:none}
 .view.on{display:block}
+
+#loginView.on{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:linear-gradient(145deg,#102e38,#087f72);
+}
+.loginCard{
+  width:min(400px,100%);
+  padding:30px;
+  background:white;
+  border-radius:24px;
+  box-shadow:0 20px 70px #0003;
+}
+.loginCard h1{
+  margin:0 0 25px;
+  text-align:center;
+  font-size:29px;
+}
+.loginCard label{
+  display:block;
+  margin:14px 0 7px;
+  font-weight:700;
+}
+.loginCard input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d5e3df;
+  border-radius:12px;
+}
+.loginCard button{width:100%}
+.error{
+  color:#b22c46;
+  min-height:22px;
+  font-size:13px;
+  line-height:1.6;
+}
+
 header{
-  background:
-    radial-gradient(circle at 90% 0,#247a71,transparent 50%),
-    var(--ink);
+  background:linear-gradient(120deg,#102e38,#17685d);
   color:white;
-  padding:28px 20px 52px;
+  padding:24px 18px 48px;
 }
 .wrap{max-width:1100px;margin:auto}
 .head{
@@ -60,32 +95,13 @@ header{
   align-items:center;
   gap:12px;
 }
-.brand{letter-spacing:-1px;margin:0;font-size:29px}
-.eyebrow{
-  font-size:11px;
-  letter-spacing:3px;
-  color:#9cdbd0;
-  margin-bottom:8px;
-}
-.subtitle{color:#c0dbd7;margin:7px 0 18px}
-.headActions{display:flex;gap:8px;flex-wrap:wrap}
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  font-size:13px;
-}
-.status:before{
-  content:'';
-  width:8px;
-  height:8px;
-  background:#f5bc68;
-  border-radius:50%;
-}
-.status.good:before{background:#4be0ac}
+.brand{margin:0;font-size:27px;letter-spacing:-1px}
+.headActions{display:flex;gap:8px}
+.headActions .btn{padding:10px 13px}
+
 .home{
   max-width:1100px;
-  margin:-26px auto 0;
+  margin:-25px auto 0;
   padding:0 18px 28px;
   position:relative;
 }
@@ -96,11 +112,12 @@ header{
   border-radius:18px;
   padding:18px 24px;
   box-shadow:0 8px 25px #123b3a0c;
-  margin-bottom:22px;
+  margin-bottom:20px;
 }
 .stats div{flex:1}
 .stats strong{display:block;font-size:25px}
 .stats small{color:#698079}
+
 .search{
   width:100%;
   border:1px solid #d8e5e0;
@@ -115,22 +132,34 @@ header{
   gap:16px;
 }
 .card{
-  background:white;
-  border:1px solid #dfebe6;
+  background:var(--card-bg);
+  border:1px solid var(--card-edge);
   border-radius:20px;
   padding:20px;
   box-shadow:0 8px 26px #17403508;
 }
+.cardTitle{
+  display:block;
+  width:100%;
+  padding:0;
+  margin:12px 0 5px;
+  text-align:left;
+  background:none;
+  color:var(--card-color);
+  font-size:22px;
+  font-weight:800;
+}
+.card small{color:#61766d}
 .badge{
-  color:var(--green);
-  background:#e5f4ee;
+  color:var(--card-color);
+  background:#ffffffaa;
   border-radius:10px;
   padding:8px;
   display:inline-block;
   font-size:18px;
 }
-.card h2{margin:12px 0 5px;font-size:22px}
-.card small{color:#718780}
+.card .btn{background:#ffffffaa;color:var(--card-color)}
+.card .primary{background:var(--card-color);color:white}
 .row{display:flex;gap:8px;margin-top:18px}
 .row>*{flex:1}
 .empty{
@@ -141,6 +170,7 @@ header{
   text-align:center;
   grid-column:1/-1;
 }
+
 .mapView{height:100dvh;position:relative;overflow:hidden}
 #map{height:100%;width:100%;background:#e8f1eb}
 .toolbar{
@@ -231,8 +261,14 @@ header{
   margin-top:15px;
 }
 .serial{color:#087f72;font-weight:800;font-size:12px}
+
 .list{max-width:900px;padding:20px;margin:auto}
-.listTop{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.listTop{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
 .listTop h2{flex:1;margin:0}
 .shopRow{
   display:flex;
@@ -258,16 +294,20 @@ header{
   margin:5px 0;
   overflow-wrap:anywhere;
 }
+
 .modal{
   border:0;
   border-radius:22px;
   width:min(480px,calc(100vw - 24px));
   max-height:88dvh;
   padding:24px;
-  color:var(--ink);
+  color:#15333e;
   box-shadow:0 20px 60px #102e3850;
 }
-.modal::backdrop{background:#102e387d;backdrop-filter:blur(3px)}
+.modal::backdrop{
+  background:#102e387d;
+  backdrop-filter:blur(3px);
+}
 .modal h2{margin:0 0 14px}
 .modal label{display:block;font-weight:750;margin:13px 0 6px}
 .modal input{
@@ -282,21 +322,8 @@ header{
   gap:8px;
   margin-top:22px;
 }
-.modal p,.modal li{line-height:1.7;color:#536c63}
-.modal pre{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-size:12px;
-  background:#eef5f1;
-  padding:15px;
-  border-radius:12px;
-  text-align:left;
-  direction:ltr;
-}
-.modal details{margin:15px 0}
-.modal summary{cursor:pointer;font-weight:750}
 .stack{display:grid;gap:9px}
-.error{color:#b22c46!important;min-height:22px;font-size:13px}
+
 .toast{
   position:fixed;
   z-index:4000;
@@ -339,7 +366,10 @@ header{
   border-radius:50%;
   box-shadow:0 3px 12px #12353c50;
 }
-.vertex.active{background:#163d49;border:3px solid #ffbb82}
+.vertex.active{
+  background:#163d49;
+  border:3px solid #ffbb82;
+}
 .leaflet-control-zoom{
   margin-top:100px!important;
   border:0!important;
@@ -347,33 +377,13 @@ header{
 }
 .leaflet-bar a{border-radius:8px!important}
 .leaflet-control-attribution{font-size:10px}
-.hint{
-  background:#eaf5ef;
-  border-radius:12px;
-  padding:12px;
-  color:#356251;
-  font-size:13px;
-  line-height:1.6;
-}
-.user{
-  max-width:240px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-size:12px;
-  color:#c0dbd7;
-  margin-top:9px;
-}
+
 @media(max-width:600px){
-  header{padding:22px 18px 48px}
-  .head{align-items:start}
-  .brand{font-size:25px}
-  .headActions{max-width:175px;justify-content:end}
-  .headActions .btn{padding:9px 12px;font-size:12px}
+  .brand{font-size:23px}
+  .headActions .btn{padding:9px 11px;font-size:12px}
   .mapTitle{max-width:calc(100vw - 136px)}
   .bottom .btn{font-size:13px;padding:12px 8px}
   .stats{padding:15px 19px}
-  .stats strong{font-size:23px}
   .shopRow{gap:8px}
   .shopRow .btn{padding:10px}
   .drawbar button{min-width:90px}
@@ -386,29 +396,45 @@ header{
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<section id="homeView" class="view on">
+<section id="loginView" class="view on">
+  <div class="loginCard">
+    <h1>SR Atlas</h1>
+
+    <form id="loginForm">
+      <label for="email">ইমেইল</label>
+      <input
+        id="email"
+        type="email"
+        required
+        autocomplete="username"
+      >
+
+      <label for="password">পাসওয়ার্ড</label>
+      <input
+        id="password"
+        type="password"
+        required
+        autocomplete="current-password"
+      >
+
+      <p id="loginError" class="error" role="alert"></p>
+
+      <button id="loginSubmit" class="btn primary">লগইন</button>
+    </form>
+  </div>
+</section>
+
+<section id="homeView" class="view">
   <header>
-    <div class="wrap">
-      <div class="head">
-        <div>
-          <div class="eyebrow">YOUR TERRITORY. CONNECTED.</div>
-          <h1 class="brand">
-            SR Atlas <span style="color:#64d5b7">↗</span>
-          </h1>
-          <p class="subtitle">দোকান, সীমানা ও আপনার পথ — এক ম্যাপে</p>
-        </div>
+    <div class="wrap head">
+      <h1 class="brand">SR Atlas</h1>
 
-        <div class="headActions">
-          <button id="help" class="btn">সেটআপ</button>
-          <button id="account" class="btn">লগইন</button>
-          <button id="newSR" class="btn primary" data-write>
-            + SR add
-          </button>
-        </div>
+      <div class="headActions">
+        <button id="account" class="btn">লগআউট</button>
+        <button id="newSR" class="btn primary" data-write>
+          + SR add
+        </button>
       </div>
-
-      <span id="status" class="status">লগইন করুন</span>
-      <div id="user" class="user"></div>
     </div>
   </header>
 
@@ -416,24 +442,22 @@ header{
     <div class="stats">
       <div>
         <strong id="srCount">0</strong>
-        <small>SR এলাকা</small>
+        <small>SR</small>
       </div>
+
       <div>
         <strong id="shopCount">0</strong>
-        <small>মোট দোকান</small>
-      </div>
-      <div>
-        <strong style="font-size:19px">LIVE</strong>
-        <small>Firebase sync</small>
+        <small>দোকান</small>
       </div>
     </div>
 
     <input
       id="srSearch"
       class="search"
-      placeholder="SR-এর নাম খুঁজুন…"
+      placeholder="SR খুঁজুন"
       aria-label="SR খুঁজুন"
     >
+
     <div id="cards" class="cards"></div>
   </main>
 </section>
@@ -449,9 +473,10 @@ header{
     <input
       id="shopSearch"
       class="search"
-      placeholder="দোকান, মালিক বা মোবাইল খুঁজুন…"
+      placeholder="দোকান খুঁজুন"
       aria-label="দোকান খুঁজুন"
     >
+
     <div id="shopList"></div>
   </main>
 </section>
@@ -464,7 +489,7 @@ header{
 
     <div class="mapTitle">
       <strong id="mapTitle"></strong>
-      <small id="mapSub">রাস্তা ও জায়গার নাম দেখতে জুম করুন</small>
+      <small id="mapSub"></small>
     </div>
 
     <div class="tools">
@@ -490,31 +515,6 @@ header{
   <div id="sheet" class="sheet" hidden></div>
 </section>
 
-<dialog id="loginDialog" class="modal">
-  <form id="loginForm">
-    <h2>আপনার Atlas-এ প্রবেশ করুন</h2>
-    <p>Firebase-এ তৈরি করা Email/Password অ্যাকাউন্ট ব্যবহার করুন।</p>
-
-    <label for="email">ইমেইল</label>
-    <input id="email" type="email" required autocomplete="username">
-
-    <label for="password">পাসওয়ার্ড</label>
-    <input
-      id="password"
-      type="password"
-      required
-      autocomplete="current-password"
-    >
-
-    <p id="loginError" class="error" role="alert"></p>
-
-    <footer>
-      <button type="button" class="btn" data-close="loginDialog">বন্ধ</button>
-      <button id="loginSubmit" class="btn primary">লগইন</button>
-    </footer>
-  </form>
-</dialog>
-
 <dialog id="nameDialog" class="modal">
   <form id="nameForm">
     <h2 id="nameTitle">নতুন SR</h2>
@@ -537,7 +537,7 @@ header{
   <div class="stack">
     <button id="renameSR" class="btn" data-write>নাম পরিবর্তন</button>
     <button id="editDistance" class="btn primary" data-write>
-      Map Distance — সীমানা বাড়ান / কমান
+      Map Distance
     </button>
   </div>
 
@@ -550,8 +550,6 @@ header{
   <form id="shopForm">
     <h2>দোকান যোগ করুন</h2>
 
-    <p class="hint">ম্যাপে বেছে নেওয়া অবস্থানে দোকানটি সংরক্ষণ হবে।</p>
-
     <label for="shopName">দোকানের নাম</label>
     <input id="shopName" required maxlength="100">
 
@@ -561,7 +559,7 @@ header{
     <label for="phone">মোবাইল নাম্বার</label>
     <input id="phone" type="tel" required maxlength="22">
 
-    <label for="photo">দোকানের ছবি (ঐচ্ছিক)</label>
+    <label for="photo">দোকানের ছবি</label>
     <input id="photo" type="file" accept="image/*">
 
     <p id="shopError" class="error" role="alert"></p>
@@ -573,109 +571,6 @@ header{
       <button class="btn primary" data-write>সংরক্ষণ</button>
     </footer>
   </form>
-</dialog>
-
-<dialog id="helpDialog" class="modal">
-  <h2>Firebase সেটআপ</h2>
-
-  <ol>
-    <li>
-      <a
-        href="https://console.firebase.google.com/project/rahad-map-ab322/authentication/providers"
-        target="_blank"
-        rel="noopener"
-      >Firebase Console → Authentication</a>-এ
-      Email/Password চালু করুন। Users → Add user দিয়ে আপনার ও টিমের
-      অ্যাকাউন্ট তৈরি করুন।
-    </li>
-
-    <li>
-      প্রতিটি ব্যবহারকারীর UID কপি করুন।
-      Realtime Database → Data-এ
-      <code>atlasMembers/USER_UID</code>
-      পাথে boolean <code>true</code> যোগ করুন।
-      USER_UID-এর জায়গায় আসল UID বসাবেন।
-      অ্যাপ নিজে কাউকে অনুমতি দিতে পারে না।
-    </li>
-
-    <li>
-      Realtime Database → Rules-এ নিচের নিয়ম অন্য বিদ্যমান নিয়মের
-      সঙ্গে মিলিয়ে বসিয়ে Publish করুন।
-      আগে থেকে root-level read/write true থাকলে সেটি বন্ধ করুন,
-      নইলে নিচের বিধিনিষেধ কার্যকর হবে না।
-    </li>
-  </ol>
-
-  <pre>{
-  "rules": {
-    ".read": false,
-    ".write": false,
-    "atlasMembers": {
-      "$uid": {
-        ".read": "auth != null &amp;&amp; auth.uid === $uid"
-      }
-    },
-    "srAtlas": {
-      ".read": "auth != null &amp;&amp; root.child('atlasMembers').child(auth.uid).val() === true",
-      ".write": "auth != null &amp;&amp; root.child('atlasMembers').child(auth.uid).val() === true"
-    }
-  }
-}</pre>
-
-  <p>
-    ৪. HTML-টি HTTPS হোস্টিংয়ে চালান।
-    Authentication → Settings → Authorized domains-এ
-    হোস্টিং ডোমেইন যোগ করুন।
-    লগইন করে SR ও দোকান যোগ করুন।
-    তথ্য <code>srAtlas</code>-এ থাকবে।
-    ছবি ছোট JPEG হিসেবে একই ডাটাবেইজে থাকবে;
-    আলাদা Storage সেটআপ লাগবে না।
-  </p>
-
-  <details>
-    <summary>পুরনো ফোনের তথ্য আনুন</summary>
-    <p>
-      আগের HTML যে browser ও একই website origin-এ চলেছিল
-      সেখানেই এই ফাইল চালিয়ে লগইন করুন।
-      পুরনো localStorage থেকে SR ও দোকান একবার আমদানি হবে।
-      নতুন সিরিয়াল দেওয়া হবে; পুরনো তথ্য মুছবে না।
-      ভিন্ন origin হলে পুরনো HTML থেকে আগে JSON export করতে হবে।
-    </p>
-
-    <button id="importOld" class="btn" data-write>
-      পুরনো তথ্য Firebase-এ আনুন
-    </button>
-  </details>
-
-  <details>
-    <summary>ম্যাপ সম্পর্কে</summary>
-    <p>
-      লেবেলসহ OpenStreetMap ব্যবহার করা হয়েছে।
-      রাস্তা ও ছোট জায়গার নাম দেখতে + দিয়ে জুম করুন।
-      SR-এর বাইরেও ম্যাপ পরিষ্কার থাকবে।
-      OSM-এ যে নাম নেই তা দেখানো সম্ভব নয়।
-      দোকানের Google Maps বাটন দিয়ে Google navigation খুলতে পারবেন।
-      প্রকৃত Google basemap চাইলে আলাদা Google Maps JavaScript API key
-      ও billing setup প্রয়োজন।
-    </p>
-    <p>
-      দোকান যোগ: ম্যাপের ভেতরে জায়গা ট্যাপ করুন, তারপর + দোকান।
-      নিজের বর্তমান জায়গায় যোগ করতে আগে ◎ চাপুন।
-      সীমানা: + কোণা → ম্যাপ ট্যাপ → কমলা বৃত্ত টেনে সরান।
-      জুম / সরান চালু করলে ম্যাপ নড়বে।
-    </p>
-  </details>
-
-  <p class="hint">
-    ইন্টারনেট বা অনুমতি না থাকলে সংরক্ষণ বন্ধ থাকবে।
-    সফল Firebase confirmation-এর পরেই “সংরক্ষণ হয়েছে” দেখাবে।
-    এই ফাইল আপনার Firebase Console-এর settings বা rules নিজে
-    পরিবর্তন করে না।
-  </p>
-
-  <footer>
-    <button class="btn primary" data-close="helpDialog">বুঝেছি</button>
-  </footer>
 </dialog>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -720,13 +615,15 @@ const clone = value => JSON.parse(JSON.stringify(value));
 
 let state = {srs: {}, nextGlobal: 1};
 let current = null;
-let mode = 'home';
+let mode = 'login';
 let ready = false;
 let connected = false;
+let allowed = false;
 let busy = false;
+let preparingShop = false;
+
 let unsubscribe = null;
 let memberUnsubscribe = null;
-let allowed = false;
 
 let drawing = false;
 let editingArea = null;
@@ -741,18 +638,36 @@ let handles = [];
 
 let selected = null;
 let shownShop = null;
+
 let watch = null;
 let myPos = null;
 let myMarker = null;
 let accuracy = null;
+let centerNext = false;
+
 let route = null;
 let routeController = null;
-let centerNext = false;
-let preparingShop = false;
+
+const colors = [
+  {bg:'#eaf2ff', main:'#2463df', edge:'#d2e3ff'},
+  {bg:'#e7f7ee', main:'#128453', edge:'#c7ead7'},
+  {bg:'#ffeded', main:'#ce4141', edge:'#ffd3d3'},
+  {bg:'#f1ebff', main:'#7a4bd0', edge:'#ded1fb'},
+  {bg:'#fff3df', main:'#b57812', edge:'#f6dfb3'},
+  {bg:'#e6f7fc', main:'#1488a2', edge:'#c4e8f1'},
+  {bg:'#ffeaf4', main:'#be397b', edge:'#f5cee1'},
+  {bg:'#eef0f4', main:'#546276', edge:'#d9dfe7'}
+];
 
 const sr = () => state.srs?.[current];
 const shops = item => Object.values(item?.shops || {});
-const srs = () => Object.values(state.srs || {});
+
+function srs() {
+  return Object.values(state.srs || {}).sort((a, b) =>
+    (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0) ||
+    String(a.id).localeCompare(String(b.id))
+  );
+}
 
 function id() {
   return crypto.randomUUID?.() ||
@@ -776,7 +691,7 @@ function toast(message) {
   if (message) {
     toast.timer = setTimeout(() => {
       $('toast').textContent = '';
-    }, 5500);
+    }, 4500);
   }
 }
 
@@ -784,8 +699,8 @@ function errorText(error) {
   const code = error?.code || '';
   const message = error?.message || '';
 
-  if (/permission|PERMISSION/i.test(code + ' ' + message)) {
-    return 'অনুমতি নেই। সেটআপে দেখানো Database Rules ও atlasMembers UID ঠিক করুন।';
+  if (/permission/i.test(code + ' ' + message)) {
+    return 'এই অ্যাকাউন্টের অনুমতি নেই।';
   }
 
   if (/invalid-credential|wrong-password|user-not-found/.test(code)) {
@@ -793,39 +708,25 @@ function errorText(error) {
   }
 
   if (/operation-not-allowed/.test(code)) {
-    return 'Firebase-এ Email/Password sign-in চালু করুন।';
+    return 'Email/Password login চালু নেই।';
   }
 
   if (/network/.test(code)) {
-    return 'ইন্টারনেট সংযোগ পাওয়া যাচ্ছে না।';
+    return 'ইন্টারনেট সংযোগ পরীক্ষা করুন।';
   }
 
   if (/too-many/.test(code)) {
-    return 'অনেকবার চেষ্টা হয়েছে। একটু পরে আবার চেষ্টা করুন।';
+    return 'একটু পরে আবার চেষ্টা করুন।';
   }
 
-  return message || 'কাজটি সম্পন্ন হয়নি। আবার চেষ্টা করুন।';
+  return message || 'কাজটি সম্পন্ন হয়নি।';
 }
 
 function syncStatus() {
   const good = !!auth.currentUser && connected && ready && allowed;
 
-  $('status').textContent = busy
-    ? 'Firebase-এ সংরক্ষণ হচ্ছে…'
-    : !auth.currentUser
-      ? 'তথ্য দেখতে লগইন করুন'
-      : !connected
-        ? 'অফলাইন — সংরক্ষণ বন্ধ'
-        : !allowed
-          ? 'অ্যাকাউন্টের অনুমতি যাচাই হচ্ছে…'
-          : !ready
-            ? 'Firebase থেকে তথ্য লোড হচ্ছে…'
-            : 'Firebase connected · Live sync';
-
-  $('status').classList.toggle('good', good && !busy);
-
   document.querySelectorAll('[data-write]').forEach(button => {
-    button.disabled = !good || busy;
+    button.disabled = !good || busy || preparingShop;
   });
 }
 
@@ -844,11 +745,11 @@ function show(view) {
 
 async function mutate(change) {
   if (!auth.currentUser || !allowed || !ready || !connected) {
-    throw Error('লগইন, অনুমতি ও ইন্টারনেট সংযোগ পরীক্ষা করুন।');
+    throw Error('ইন্টারনেট সংযোগ ও অ্যাকাউন্টের অনুমতি পরীক্ষা করুন।');
   }
 
   if (busy) {
-    throw Error('আগের সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
+    throw Error('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
   }
 
   busy = true;
@@ -859,8 +760,10 @@ async function mutate(change) {
       atlas,
       data => {
         const next = data || {srs: {}, nextGlobal: 1};
+
         next.srs ||= {};
         next.nextGlobal = Math.max(1, Number(next.nextGlobal) || 1);
+
         change(next);
         return next;
       },
@@ -873,14 +776,13 @@ async function mutate(change) {
 
     state = result.snapshot.val() || {srs: {}, nextGlobal: 1};
     renderAll();
-    toast('Firebase-এ সংরক্ষণ হয়েছে ✓');
+    toast('সংরক্ষণ হয়েছে ✓');
   } finally {
     busy = false;
     syncStatus();
   }
 }
 
-// লেবেলসহ ম্যাপ। ম্যাপের ওপর গাঢ় আবরণ রাখা হয়নি।
 const map = L.map('map', {
   zoomControl: true
 }).setView([23.8103, 90.4125], 13);
@@ -899,7 +801,7 @@ let tileErrors = 0;
 
 tiles.on('tileerror', () => {
   if (++tileErrors === 3) {
-    toast('ম্যাপ লোড হচ্ছে না। ইন্টারনেট বা tile access পরীক্ষা করুন।');
+    toast('ম্যাপ লোড হয়নি। সংযোগ পরীক্ষা করুন।');
   }
 });
 
@@ -914,9 +816,7 @@ const mapLayer = L.layerGroup().addTo(map);
 const drawLayer = L.layerGroup().addTo(map);
 
 function ring(item) {
-  if (Array.isArray(item?.polygon)) {
-    return item.polygon;
-  }
+  if (Array.isArray(item?.polygon)) return item.polygon;
 
   if (item?.bounds) {
     return [
@@ -931,20 +831,16 @@ function ring(item) {
 }
 
 function validRing(vertices) {
-  if (!Array.isArray(vertices) || vertices.length < 3) {
-    return false;
-  }
+  if (!Array.isArray(vertices) || vertices.length < 3) return false;
 
-  const validCoordinates = vertices.every(point =>
+  if (!vertices.every(point =>
     Array.isArray(point) &&
     point.length === 2 &&
     Number.isFinite(point[0]) &&
     Math.abs(point[0]) <= 85 &&
     Number.isFinite(point[1]) &&
     Math.abs(point[1]) <= 180
-  );
-
-  if (!validCoordinates) return false;
+  )) return false;
 
   const area = vertices.reduce((total, a, index) => {
     const b = vertices[(index + 1) % vertices.length];
@@ -988,9 +884,7 @@ function selfCross(vertices) {
         (y === 0 && between(a, b, d)) ||
         (z === 0 && between(c, d, a)) ||
         (w === 0 && between(c, d, b))
-      ) {
-        return true;
-      }
+      ) return true;
     }
   }
 
@@ -1026,9 +920,7 @@ function inside(point, item) {
         point.lng - (a[1] + t * dx),
         point.lat - (a[0] + t * dy)
       ) < 1e-9
-    ) {
-      return true;
-    }
+    ) return true;
 
     if (
       (a[0] > point.lat) !== (b[0] > point.lat) &&
@@ -1068,45 +960,57 @@ function renderCards() {
 
   $('cards').replaceChildren();
 
-  items
-    .filter(item => item.name.toLowerCase().includes(query))
-    .forEach(item => {
-      const card = document.createElement('article');
-      card.className = 'card';
+  items.forEach((item, index) => {
+    if (!String(item.name).toLowerCase().includes(query)) return;
 
-      card.innerHTML =
-        '<span class="badge">⌖</span>' +
-        `<h2>${esc(item.name)}</h2>` +
-        `<small>${shops(item).length}টি দোকান · নিজস্ব সীমানা</small>`;
+    const color = colors[index % colors.length];
+    const card = document.createElement('article');
+    card.className = 'card';
 
-      const row = document.createElement('div');
-      row.className = 'row';
+    card.style.setProperty('--card-bg', color.bg);
+    card.style.setProperty('--card-color', color.main);
+    card.style.setProperty('--card-edge', color.edge);
 
-      const mapButton = document.createElement('button');
-      mapButton.className = 'btn primary';
-      mapButton.textContent = 'Open Location';
-      mapButton.onclick = () => openMap(item.id);
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = '⌖';
 
-      const listButton = document.createElement('button');
-      listButton.className = 'btn';
-      listButton.textContent = 'Shop List';
-      listButton.onclick = () => openList(item.id);
+    const title = document.createElement('button');
+    title.className = 'cardTitle';
+    title.textContent = item.name;
 
-      row.append(mapButton, listButton);
-      card.append(row);
-      $('cards').append(card);
-    });
+    title.onclick = () => {
+      current = item.id;
+      $('editTitle').textContent = item.name;
+      $('editDialog').showModal();
+    };
 
-  if (!$('cards').children.length) {
-    const message = !auth.currentUser
-      ? 'লগইন করলে আপনার সব SR ও দোকান এখানে দেখা যাবে।'
-      : !ready
-        ? 'তথ্য লোড হচ্ছে…'
-        : query
-          ? 'এই নামে SR পাওয়া যায়নি।'
-          : 'প্রথম এলাকা তৈরি করতে + SR add চাপুন।';
+    const count = document.createElement('small');
+    count.textContent = shops(item).length + 'টি দোকান';
 
-    $('cards').innerHTML = `<div class="empty">${message}</div>`;
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const mapButton = document.createElement('button');
+    mapButton.className = 'btn primary';
+    mapButton.textContent = 'Open Location';
+    mapButton.onclick = () => openMap(item.id);
+
+    const listButton = document.createElement('button');
+    listButton.className = 'btn';
+    listButton.textContent = 'Shop List';
+    listButton.onclick = () => openList(item.id);
+
+    row.append(mapButton, listButton);
+    card.append(badge, title, count, row);
+    $('cards').append(card);
+  });
+
+  if (!$('cards').children.length && ready) {
+    $('cards').innerHTML =
+      '<div class="empty">' +
+      (query ? 'পাওয়া যায়নি' : 'কোনো SR নেই') +
+      '</div>';
   }
 }
 
@@ -1115,11 +1019,13 @@ function renderMap() {
 
   if (!sr() || drawing) return;
 
+  const index = srs().findIndex(item => item.id === current);
+  const color = colors[Math.max(0, index) % colors.length];
   const vertices = ring(sr());
 
   if (vertices.length) {
     L.polygon(vertices, {
-      color: '#087f72',
+      color: color.main,
       weight: 3,
       fillOpacity: .025,
       dashArray: '9 6',
@@ -1134,7 +1040,8 @@ function renderMap() {
         icon: L.divIcon({
           className: 'pin',
           html:
-            `<span><b>${Number(shop.srSerial) || '•'}</b></span>`,
+            `<span style="background:${color.main}">` +
+            `<b>${Number(shop.srSerial) || '•'}</b></span>`,
           iconSize: [32, 38],
           iconAnchor: [16, 36]
         })
@@ -1152,8 +1059,7 @@ function renderMap() {
   });
 
   $('mapTitle').textContent = sr().name;
-  $('mapSub').textContent =
-    shops(sr()).length + 'টি দোকান · রাস্তার নাম দেখতে জুম করুন';
+  $('mapSub').textContent = shops(sr()).length + 'টি দোকান';
 }
 
 map.on('zoomend', () => {
@@ -1171,9 +1077,7 @@ function clearRoute() {
 }
 
 function stopGPS() {
-  if (watch !== null) {
-    navigator.geolocation?.clearWatch(watch);
-  }
+  if (watch !== null) navigator.geolocation?.clearWatch(watch);
 
   watch = null;
   myPos = null;
@@ -1188,7 +1092,7 @@ function stopGPS() {
 
 function gps(center = true) {
   if (!navigator.geolocation || !isSecureContext) {
-    toast('লাইভ লোকেশনের জন্য HTTPS বা localhost-এ চালান।');
+    toast('লোকেশনের জন্য HTTPS প্রয়োজন।');
     return;
   }
 
@@ -1201,8 +1105,6 @@ function gps(center = true) {
     }
     return;
   }
-
-  toast('আপনার লোকেশন লোড হচ্ছে…');
 
   watch = navigator.geolocation.watchPosition(
     position => {
@@ -1243,8 +1145,8 @@ function gps(center = true) {
       stopGPS();
       toast(
         error.code === 1
-          ? 'লোকেশন permission দিন।'
-          : 'GPS লোকেশন পাওয়া যায়নি।'
+          ? 'লোকেশন অনুমতি দিন।'
+          : 'লোকেশন পাওয়া যায়নি।'
       );
     },
     {
@@ -1336,7 +1238,7 @@ function renderList() {
 
   if (!$('shopList').children.length) {
     $('shopList').innerHTML =
-      '<div class="empty">কোনো দোকান পাওয়া যায়নি।</div>';
+      '<div class="empty">কোনো দোকান নেই</div>';
   }
 }
 
@@ -1373,7 +1275,7 @@ function viewShop(key, recenter = true) {
   }
 
   const phone = document.createElement('p');
-  phone.textContent = 'মোবাইল: ' + shop.phone;
+  phone.textContent = shop.phone;
   sheet.append(phone);
 
   const actions = document.createElement('div');
@@ -1386,7 +1288,7 @@ function viewShop(key, recenter = true) {
 
   const google = document.createElement('a');
   google.className = 'btn';
-  google.textContent = 'Google Maps ↗';
+  google.textContent = 'Google Maps';
   google.href =
     'https://www.google.com/maps/dir/?api=1&destination=' +
     encodeURIComponent(shop.lat + ',' + shop.lng) +
@@ -1407,7 +1309,7 @@ function viewShop(key, recenter = true) {
   const srId = current;
 
   remove.onclick = async () => {
-    if (!confirm('এই দোকানটি মুছবেন?')) return;
+    if (!confirm('দোকানটি মুছবেন?')) return;
 
     try {
       await mutate(data => {
@@ -1439,7 +1341,7 @@ function viewShop(key, recenter = true) {
 async function directions(shop) {
   if (!myPos) {
     gps(true);
-    toast('লোকেশন লোড হলে আবার Destination চাপুন।');
+    toast('লোকেশন পাওয়া গেলে আবার চাপুন।');
     return;
   }
 
@@ -1447,19 +1349,15 @@ async function directions(shop) {
 
   const controller = new AbortController();
   routeController = controller;
-
   const timer = setTimeout(() => controller.abort(), 15000);
-  toast('রাস্তা অনুযায়ী রুট লোড হচ্ছে…');
 
   try {
-    const url =
+    const response = await fetch(
       'https://router.project-osrm.org/route/v1/driving/' +
       `${myPos[1]},${myPos[0]};${shop.lng},${shop.lat}` +
-      '?overview=full&geometries=geojson';
-
-    const response = await fetch(url, {
-      signal: controller.signal
-    });
+      '?overview=full&geometries=geojson',
+      {signal: controller.signal}
+    );
 
     const result = await response.json();
 
@@ -1467,9 +1365,7 @@ async function directions(shop) {
       !response.ok ||
       result.code !== 'Ok' ||
       !result.routes?.length
-    ) {
-      throw Error('No route');
-    }
+    ) throw Error('No route');
 
     if (
       routeController !== controller ||
@@ -1481,10 +1377,7 @@ async function directions(shop) {
 
     route = L.polyline(
       path.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
-      {
-        weight: 6,
-        color: '#237cf4'
-      }
+      {weight: 6, color: '#237cf4'}
     ).addTo(map);
 
     $('sheet').hidden = true;
@@ -1501,9 +1394,9 @@ async function directions(shop) {
       Math.round(path.duration / 60) +
       ' মিনিট'
     );
-  } catch (error) {
+  } catch {
     if (routeController === controller) {
-      toast('রুট পাওয়া যায়নি। Google Maps বাটন ব্যবহার করুন।');
+      toast('Google Maps ব্যবহার করুন।');
     }
   } finally {
     clearTimeout(timer);
@@ -1564,12 +1457,6 @@ function setZoom(on) {
   handles.forEach(handle => {
     handle.dragging[on ? 'disable' : 'enable']();
   });
-
-  toast(
-    on
-      ? 'ম্যাপ জুম বা সরান।'
-      : 'কমলা বৃত্ত টেনে সীমানা ঠিক করুন।'
-  );
 }
 
 function renderDrawing() {
@@ -1648,7 +1535,7 @@ function startArea(name, existing = null) {
   $('drawbar').hidden = false;
 
   $('mapTitle').textContent = name;
-  $('mapSub').textContent = 'সীমানা ঠিক করুন · অন্তত ৩টি কোণা';
+  $('mapSub').textContent = '';
 
   show('map');
   renderDrawing();
@@ -1658,10 +1545,6 @@ function startArea(name, existing = null) {
     map.invalidateSize();
     fit();
   });
-
-  if (!existing) {
-    toast('প্রথম কোণা দিতে + কোণা চাপুন।');
-  }
 }
 
 function endArea() {
@@ -1686,26 +1569,25 @@ function endArea() {
     'boxZoom',
     'keyboard'
   ].forEach(key => map[key]?.enable());
-
-  toast('');
 }
 
 $('zoomToggle').onclick = () => setZoom(!zooming);
 
 $('addCorner').onclick = () => {
-  if (zooming) return;
+  if (zooming || busy) return;
 
   addingCorner = true;
   selectedCorner = -1;
   renderDrawing();
-  toast('নতুন কোণার জায়গায় ম্যাপে ট্যাপ করুন।');
+
+  toast('ম্যাপে কোণার জায়গায় ট্যাপ করুন।');
 };
 
 $('removeCorner').onclick = () => {
-  if (zooming) return;
+  if (zooming || busy) return;
 
   if (selectedCorner < 0) {
-    toast('আগে একটি কমলা বৃত্ত নির্বাচন করুন।');
+    toast('একটি কোণা নির্বাচন করুন।');
     return;
   }
 
@@ -1716,7 +1598,7 @@ $('removeCorner').onclick = () => {
 
 $('saveArea').onclick = async () => {
   if (!validRing(points) || selfCross(points)) {
-    toast('অন্তত ৩টি পৃথক কোণা দিয়ে পরস্পর না-কাটা সীমানা দিন।');
+    toast('অন্তত ৩টি কোণা দিয়ে সঠিক সীমানা তৈরি করুন।');
     return;
   }
 
@@ -1724,21 +1606,20 @@ $('saveArea').onclick = async () => {
   const edit = editingArea;
   const key = edit?.id || id();
   const name = pendingName;
+  const createdAt = Date.now();
 
   try {
     await mutate(data => {
       if (edit) {
         const item = data.srs[key];
 
-        if (!item) throw Error('SR আর নেই।');
+        if (!item) throw Error('SR পাওয়া যায়নি।');
 
         if (
           JSON.stringify(ring(item)) !==
           JSON.stringify(edit.polygon)
         ) {
-          throw Error(
-            'অন্য কেউ সীমানা বদলেছেন। বাতিল করে আবার খুলুন।'
-          );
+          throw Error('সীমানা বদলেছে। আবার খুলুন।');
         }
 
         item.polygon = polygon;
@@ -1747,6 +1628,7 @@ $('saveArea').onclick = async () => {
           id: key,
           name,
           polygon,
+          createdAt,
           nextLocal: 1,
           shops: {}
         };
@@ -1761,6 +1643,8 @@ $('saveArea').onclick = async () => {
 };
 
 $('cancelArea').onclick = () => {
+  if (busy) return;
+
   const key = editingArea?.id;
   endArea();
 
@@ -1774,15 +1658,11 @@ $('cancelArea').onclick = () => {
 
 map.on('click', event => {
   if (drawing) {
-    if (!zooming && addingCorner) {
+    if (!zooming && addingCorner && !busy) {
       points.push([event.latlng.lat, event.latlng.lng]);
       addingCorner = false;
       selectedCorner = points.length - 1;
       renderDrawing();
-
-      toast(
-        'বৃত্ত টেনে সরান। আরেকটি কোণার জন্য + কোণা চাপুন।'
-      );
     }
     return;
   }
@@ -1793,13 +1673,13 @@ map.on('click', event => {
 
   if (!inside(selected, sr())) {
     selected = null;
-    toast('দোকান যোগ করতে SR এলাকার ভেতরে ট্যাপ করুন।');
+    toast('SR এলাকার ভেতরে ট্যাপ করুন।');
     return;
   }
 
   const button = document.createElement('button');
   button.className = 'btn primary';
-  button.textContent = '+ দোকান যোগ';
+  button.textContent = '+ দোকান';
   button.onclick = openShopForm;
 
   L.popup()
@@ -1818,12 +1698,12 @@ function openShopForm() {
   }
 
   if (!selected || !inside(selected, sr())) {
-    toast('এলাকার ভেতরে দোকানের জায়গায় ম্যাপে ট্যাপ করুন।');
+    toast('ম্যাপে দোকানের জায়গায় ট্যাপ করুন।');
     return;
   }
 
   if (!ready || !connected || !allowed) {
-    toast('লগইন ও Firebase সংযোগ পরীক্ষা করুন।');
+    toast('সংযোগ পরীক্ষা করুন।');
     return;
   }
 
@@ -1865,10 +1745,7 @@ async function photoData(file) {
 
         const context = canvas.getContext('2d');
         context.fillStyle = 'white';
-
-        context.fillRect(
-          0, 0, canvas.width, canvas.height
-        );
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
         context.drawImage(
           image, 0, 0, canvas.width, canvas.height
@@ -1884,7 +1761,7 @@ async function photoData(file) {
 
     image.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(Error('ছবিটি পড়া যায়নি। JPG বা PNG ব্যবহার করুন।'));
+      reject(Error('JPG বা PNG ছবি ব্যবহার করুন।'));
     };
 
     image.src = url;
@@ -1893,7 +1770,7 @@ async function photoData(file) {
 
 $('shopForm').onsubmit = async event => {
   event.preventDefault();
-  if (preparingShop) return;
+  if (preparingShop || busy) return;
 
   const srId = current;
   const position = selected
@@ -1906,14 +1783,14 @@ $('shopForm').onsubmit = async event => {
   const file = $('photo').files[0];
 
   if (!name || !owner || !phone) {
-    $('shopError').textContent = 'সব প্রয়োজনীয় ঘর পূরণ করুন।';
+    $('shopError').textContent = 'সব ঘর পূরণ করুন।';
     return;
   }
 
   if (!position) return;
 
   preparingShop = true;
-  $('shopForm').querySelector('button.primary').disabled = true;
+  syncStatus();
 
   try {
     const photo = await photoData(file);
@@ -1923,9 +1800,7 @@ $('shopForm').onsubmit = async event => {
       const item = data.srs[srId];
 
       if (!item || !inside(position, item)) {
-        throw Error(
-          'সীমানা বদলেছে বা দোকানের অবস্থান এলাকার বাইরে।'
-        );
+        throw Error('দোকানের অবস্থান এলাকার বাইরে।');
       }
 
       item.shops ||= {};
@@ -1976,7 +1851,7 @@ $('nameForm').onsubmit = async event => {
 
   try {
     await mutate(data => {
-      if (!data.srs[key]) throw Error('SR আর নেই।');
+      if (!data.srs[key]) throw Error('SR পাওয়া যায়নি।');
       data.srs[key].name = name;
     });
 
@@ -1994,14 +1869,16 @@ $('menu').onclick = () => {
 };
 
 $('renameSR').onclick = () => {
+  if (!sr()) return;
   editingName = current;
   $('editDialog').close();
-  $('nameTitle').textContent = 'SR-এর নাম পরিবর্তন';
+  $('nameTitle').textContent = 'নাম পরিবর্তন';
   $('srName').value = sr().name;
   $('nameDialog').showModal();
 };
 
 $('editDistance').onclick = () => {
+  if (!sr()) return;
   $('editDialog').close();
   startArea(sr().name, sr());
 };
@@ -2014,10 +1891,7 @@ $('listMap').onclick = () => openMap(current);
 $('listBack').onclick = () => show('home');
 
 $('mapBack').onclick = () => {
-  if (busy) {
-    toast('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
-    return;
-  }
+  if (busy || preparingShop) return;
 
   if (drawing) endArea();
 
@@ -2036,26 +1910,23 @@ $('mapBack').onclick = () => {
 $('srSearch').oninput = renderCards;
 $('shopSearch').oninput = renderList;
 
-$('help').onclick = () => $('helpDialog').showModal();
-
 $('account').onclick = async () => {
-  if (auth.currentUser) {
-    if (!confirm('লগআউট করবেন?')) return;
+  if (busy || preparingShop) return;
 
-    try {
-      await signOut(auth);
-    } catch (error) {
-      toast(errorText(error));
-    }
-  } else {
-    $('loginError').textContent = '';
-    $('loginDialog').showModal();
+  try {
+    await signOut(auth);
+  } catch (error) {
+    toast(errorText(error));
   }
 };
 
+let loginPending = false;
+
 $('loginForm').onsubmit = async event => {
   event.preventDefault();
+  if (loginPending) return;
 
+  loginPending = true;
   $('loginSubmit').disabled = true;
   $('loginError').textContent = '';
 
@@ -2067,21 +1938,20 @@ $('loginForm').onsubmit = async event => {
     );
 
     $('password').value = '';
-    $('loginDialog').close();
   } catch (error) {
     $('loginError').textContent = errorText(error);
   } finally {
-    $('loginSubmit').disabled = false;
+    loginPending = false;
+
+    if (mode === 'login') {
+      $('loginSubmit').disabled = false;
+    }
   }
 };
 
 document.querySelectorAll('[data-close]').forEach(button => {
   button.onclick = () => {
-    if (busy || preparingShop) {
-      toast('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
-      return;
-    }
-
+    if (busy || preparingShop) return;
     $(button.dataset.close).close();
   };
 });
@@ -2097,49 +1967,57 @@ onValue(ref(db, '.info/connected'), snapshot => {
   syncStatus();
 });
 
-onAuthStateChanged(auth, user => {
-  unsubscribe?.();
-  memberUnsubscribe?.();
-
-  unsubscribe = null;
-  memberUnsubscribe = null;
-  ready = false;
-  allowed = false;
-  state = {srs: {}, nextGlobal: 1};
-
+function resetPage() {
   stopGPS();
   clearRoute();
 
   if (drawing) endArea();
 
   current = null;
+  selected = null;
   shownShop = null;
+
   $('sheet').hidden = true;
 
   mapLayer.clearLayers();
   drawLayer.clearLayers();
   map.closePopup();
 
-  show('home');
+  document.querySelectorAll('dialog').forEach(dialog => {
+    if (dialog.open) dialog.close();
+  });
 
-  $('account').textContent = user ? 'লগআউট' : 'লগইন';
-  $('user').textContent = user?.email || '';
+  show('login');
+}
 
+onAuthStateChanged(auth, user => {
+  unsubscribe?.();
+  memberUnsubscribe?.();
+
+  unsubscribe = null;
+  memberUnsubscribe = null;
+
+  ready = false;
+  allowed = false;
+  state = {srs: {}, nextGlobal: 1};
+
+  resetPage();
   renderCards();
   syncStatus();
 
   if (!user) {
-    document.querySelectorAll('dialog').forEach(dialog => {
-      if (dialog.open) dialog.close();
-    });
+    $('loginSubmit').disabled = false;
+    $('loginError').textContent = '';
     return;
   }
+
+  $('loginSubmit').disabled = true;
+  $('loginError').textContent = '';
 
   memberUnsubscribe = onValue(
     ref(db, 'atlasMembers/' + user.uid),
     snapshot => {
       allowed = snapshot.val() === true;
-
       unsubscribe?.();
       unsubscribe = null;
       ready = false;
@@ -2147,32 +2025,14 @@ onAuthStateChanged(auth, user => {
       if (!allowed) {
         state = {srs: {}, nextGlobal: 1};
 
-        stopGPS();
-        clearRoute();
-
-        if (drawing) endArea();
-
-        show('home');
-        current = null;
-        shownShop = null;
-        $('sheet').hidden = true;
-
-        mapLayer.clearLayers();
-
-        document.querySelectorAll('dialog').forEach(dialog => {
-          if (dialog.open && dialog.id !== 'helpDialog') {
-            dialog.close();
-          }
-        });
-
+        resetPage();
         renderCards();
         syncStatus();
 
-        $('status').textContent = 'অনুমতি নেই — সেটআপ দেখুন';
+        $('loginError').textContent =
+          'এই অ্যাকাউন্টের অনুমতি নেই।';
 
-        toast(
-          'এই UID-কে atlasMembers-এ অনুমতি দিন: ' + user.uid
-        );
+        $('loginSubmit').disabled = false;
         return;
       }
 
@@ -2185,14 +2045,21 @@ onAuthStateChanged(auth, user => {
           state.srs ||= {};
           ready = true;
 
+          if (mode === 'login') show('home');
+
           renderAll();
           syncStatus();
         },
         error => {
           ready = false;
+          state = {srs: {}, nextGlobal: 1};
+
+          resetPage();
+          renderCards();
           syncStatus();
-          $('status').textContent = 'Database Rules পরীক্ষা করুন';
-          toast(errorText(error));
+
+          $('loginError').textContent = errorText(error);
+          $('loginSubmit').disabled = false;
         }
       );
 
@@ -2201,118 +2068,17 @@ onAuthStateChanged(auth, user => {
     error => {
       allowed = false;
       ready = false;
+      state = {srs: {}, nextGlobal: 1};
+
+      resetPage();
+      renderCards();
       syncStatus();
-      $('status').textContent = 'অনুমতি যাচাই ব্যর্থ';
-      toast(errorText(error));
+
+      $('loginError').textContent = errorText(error);
+      $('loginSubmit').disabled = false;
     }
   );
 });
-
-// আগের localStorage ডেটা একবার Firebase-এ আমদানি।
-$('importOld').onclick = async () => {
-  let old;
-
-  try {
-    old = JSON.parse(
-      localStorage.getItem('sr-atlas-v3') ||
-      localStorage.getItem('sr-shop-map-v2') ||
-      'null'
-    );
-  } catch {
-    toast('পুরনো তথ্য পড়া যায়নি।');
-    return;
-  }
-
-  if (!Array.isArray(old?.srs) || !old.srs.length) {
-    toast('এই website origin-এ পুরনো localStorage তথ্য নেই।');
-    return;
-  }
-
-  if (!confirm(
-    'পুরনো ' + old.srs.length +
-    'টি SR আমদানি করবেন? নতুন সিরিয়াল দেওয়া হবে।'
-  )) return;
-
-  try {
-    const prepared = [];
-
-    for (const item of old.srs) {
-      const polygon = ring(item);
-
-      if (!validRing(polygon) || selfCross(polygon)) {
-        throw Error(
-          'পুরনো SR-এর সীমানা সঠিক নয়: ' + item.name
-        );
-      }
-
-      const marker = encodeURIComponent(
-        String(item.id || item.name)
-      ).replace(/\./g, '%2E');
-
-      const records = [];
-
-      for (const shop of item.shops || []) {
-        const lat = Number(shop.lat);
-        const lng = Number(shop.lng);
-
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-          throw Error('পুরনো দোকানের অবস্থান সঠিক নয়।');
-        }
-
-        records.push({
-          id: id(),
-          name: String(shop.name || 'দোকান'),
-          owner: String(shop.owner || ''),
-          phone: String(shop.phone || ''),
-          lat,
-          lng,
-          photo:
-            typeof shop.photo === 'string' &&
-            shop.photo.startsWith('data:image/')
-              ? shop.photo
-              : ''
-        });
-      }
-
-      prepared.push({
-        id: id(),
-        name: String(item.name || 'SR'),
-        polygon: clone(polygon),
-        marker,
-        records
-      });
-    }
-
-    await mutate(data => {
-      data.importedLegacy ||= {};
-
-      for (const item of prepared) {
-        if (data.importedLegacy[item.marker]) continue;
-
-        const target = {
-          id: item.id,
-          name: item.name,
-          polygon: item.polygon,
-          nextLocal: 1,
-          shops: {}
-        };
-
-        for (const shop of item.records) {
-          target.shops[shop.id] = {
-            ...shop,
-            globalSerial: data.nextGlobal++,
-            srSerial: target.nextLocal++
-          };
-        }
-
-        data.srs[item.id] = target;
-        data.importedLegacy[item.marker] = true;
-      }
-    });
-  } catch (error) {
-    toast(errorText(error));
-  }
-};
 
 renderCards();
 syncStatus();
@@ -2324,11 +2090,11 @@ window.addEventListener('error', event => {
     event.message &&
     /L is not defined|Failed to fetch|Script error/.test(event.message)
   ) {
-    const status = document.getElementById('status');
+    const message = document.getElementById('loginError');
 
-    if (status) {
-      status.textContent =
-        'স্ক্রিপ্ট লোড হয়নি — ইন্টারনেট পরীক্ষা করে রিফ্রেশ করুন।';
+    if (message) {
+      message.textContent =
+        'লোড হয়নি। ইন্টারনেট পরীক্ষা করে রিফ্রেশ করুন।';
     }
   }
 });
