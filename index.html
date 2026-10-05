@@ -2,19 +2,18 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102e38">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>SR Atlas</title>
-
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="canonical" href="https://rahad.site/">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
   font-family:system-ui,'Noto Sans Bengali',sans-serif;
   color:#15333e;
-  background:#f3f7f6;
-  --green:#087f72;
+  background:#f3f7f6
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -23,87 +22,100 @@ button,input{font:inherit}
 button{cursor:pointer;border:0}
 button:disabled{opacity:.45;cursor:default}
 .btn{
-  padding:12px 16px;
+  padding:12px 15px;
   border-radius:13px;
   background:#e9f3f1;
   color:#146456;
   font-weight:750;
   text-decoration:none;
-  text-align:center;
+  text-align:center
 }
-.primary{background:#087f72;color:#fff}
+.primary{background:#087f72;color:white}
 .danger{background:#fff0f1;color:#b5384a}
 .icon{
-  height:45px;
-  min-width:45px;
+  height:44px;
+  min-width:44px;
   border-radius:14px;
   background:white;
   color:#15333e;
   font-size:22px;
-  box-shadow:0 4px 20px #12353c20;
+  box-shadow:0 4px 20px #12353c20
 }
 .view{display:none}
 .view.on{display:block}
+.loading{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  color:#087f72
+}
+.spinner{
+  width:36px;
+  height:36px;
+  border:3px solid #d6e8e2;
+  border-top-color:#087f72;
+  border-radius:50%;
+  animation:spin .8s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 #loginView.on{
   min-height:100dvh;
   display:grid;
   place-items:center;
   padding:20px;
-  background:linear-gradient(145deg,#102e38,#087f72);
+  background:linear-gradient(145deg,#102e38,#087f72)
 }
 .loginCard{
   width:min(400px,100%);
   padding:30px;
   background:white;
   border-radius:24px;
-  box-shadow:0 20px 70px #0003;
+  box-shadow:0 20px 70px #0003
 }
 .loginCard h1{
   margin:0 0 25px;
   text-align:center;
-  font-size:29px;
+  font-size:29px
 }
-.loginCard label{
+label{
   display:block;
   margin:14px 0 7px;
-  font-weight:700;
+  font-weight:700
 }
-.loginCard input{
+input{
   width:100%;
   padding:13px;
   border:1px solid #d5e3df;
-  border-radius:12px;
+  border-radius:12px
 }
-.loginCard button{width:100%}
+.loginCard .btn{width:100%}
 .error{
   color:#b22c46;
   min-height:22px;
   font-size:13px;
-  line-height:1.6;
+  line-height:1.6
 }
 
 header{
   background:linear-gradient(120deg,#102e38,#17685d);
   color:white;
-  padding:24px 18px 48px;
+  padding:24px 18px 48px
 }
-.wrap{max-width:1100px;margin:auto}
 .head{
+  max-width:1100px;
+  margin:auto;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
+  gap:12px
 }
 .brand{margin:0;font-size:27px;letter-spacing:-1px}
-.headActions{display:flex;gap:8px}
-.headActions .btn{padding:10px 13px}
-
 .home{
   max-width:1100px;
   margin:-25px auto 0;
   padding:0 18px 28px;
-  position:relative;
+  position:relative
 }
 .stats{
   display:flex;
@@ -112,31 +124,22 @@ header{
   border-radius:18px;
   padding:18px 24px;
   box-shadow:0 8px 25px #123b3a0c;
-  margin-bottom:20px;
+  margin-bottom:20px
 }
 .stats div{flex:1}
 .stats strong{display:block;font-size:25px}
 .stats small{color:#698079}
-
-.search{
-  width:100%;
-  border:1px solid #d8e5e0;
-  background:white;
-  border-radius:14px;
-  padding:13px 15px;
-  margin-bottom:18px;
-}
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:16px;
+  gap:16px
 }
 .card{
-  background:var(--card-bg);
-  border:1px solid var(--card-edge);
+  background:var(--bg);
+  border:1px solid var(--edge);
   border-radius:20px;
   padding:20px;
-  box-shadow:0 8px 26px #17403508;
+  box-shadow:0 8px 26px #17403508
 }
 .cardTitle{
   display:block;
@@ -145,21 +148,21 @@ header{
   margin:12px 0 5px;
   text-align:left;
   background:none;
-  color:var(--card-color);
+  color:var(--color);
   font-size:22px;
-  font-weight:800;
+  font-weight:800
 }
 .card small{color:#61766d}
 .badge{
-  color:var(--card-color);
+  color:var(--color);
   background:#ffffffaa;
   border-radius:10px;
   padding:8px;
   display:inline-block;
-  font-size:18px;
+  font-size:18px
 }
-.card .btn{background:#ffffffaa;color:var(--card-color)}
-.card .primary{background:var(--card-color);color:white}
+.card .btn{background:#ffffffaa;color:var(--color)}
+.card .primary{background:var(--color);color:white}
 .row{display:flex;gap:8px;margin-top:18px}
 .row>*{flex:1}
 .empty{
@@ -168,11 +171,19 @@ header{
   border-radius:18px;
   color:#617b73;
   text-align:center;
-  grid-column:1/-1;
+  grid-column:1/-1
 }
 
-.mapView{height:100dvh;position:relative;overflow:hidden}
-#map{height:100%;width:100%;background:#e8f1eb}
+.mapView{
+  height:100dvh;
+  position:relative;
+  overflow:hidden
+}
+#map{
+  height:100%;
+  width:100%;
+  background:#e8f1eb
+}
 .toolbar{
   position:absolute;
   z-index:800;
@@ -181,43 +192,102 @@ header{
   right:12px;
   display:flex;
   gap:8px;
-  pointer-events:none;
-  align-items:start;
+  align-items:flex-start;
+  pointer-events:none
 }
 .toolbar>*{pointer-events:auto}
-.mapTitle{
-  background:white;
-  box-shadow:0 4px 20px #12353c20;
-  padding:10px 14px;
-  border-radius:14px;
-  max-width:350px;
+.searchBox{
+  flex:1;
   min-width:0;
+  max-width:480px
 }
-.mapTitle strong{
-  display:block;
-  white-space:nowrap;
+.searchForm{
+  display:flex;
+  align-items:center;
+  background:white;
+  border-radius:14px;
+  box-shadow:0 4px 20px #12353c20;
+  overflow:hidden
+}
+.searchForm input{
+  border:0;
+  outline:none;
+  border-radius:0;
+  padding:12px;
+  min-width:0
+}
+.searchForm button{
+  background:white;
+  color:#087f72;
+  font-size:21px;
+  padding:8px 13px;
+  height:44px
+}
+.mapCaption{
+  background:#fffffff2;
+  margin-top:7px;
+  border-radius:12px;
+  padding:7px 12px;
+  font-size:12px;
+  display:inline-block;
+  max-width:100%;
   overflow:hidden;
   text-overflow:ellipsis;
+  white-space:nowrap
 }
-.mapTitle small{font-size:11px;color:#647e75}
-.tools{margin-left:auto;display:grid;gap:8px}
+.results{
+  background:white;
+  border-radius:14px;
+  box-shadow:0 5px 22px #12353c33;
+  margin-top:8px;
+  max-height:42dvh;
+  overflow:auto
+}
+.result{
+  display:block;
+  text-align:left;
+  width:100%;
+  padding:13px;
+  border-bottom:1px solid #edf2ef;
+  background:white;
+  color:#15333e;
+  font-size:13px
+}
+.result:hover{background:#edf6f2}
+.tools{
+  position:absolute;
+  z-index:800;
+  right:12px;
+  top:130px;
+  display:grid;
+  gap:8px
+}
+.tools .active{color:white;background:#237cf4}
+.compass{
+  display:inline-block;
+  color:#dc3845;
+  font-size:24px
+}
 .bottom{
   position:absolute;
   z-index:800;
   left:12px;
   right:12px;
-  bottom:32px;
+  bottom:35px;
   display:flex;
   gap:8px;
-  max-width:550px;
+  max-width:550px
 }
-.bottom>*{flex:1;box-shadow:0 3px 15px #12353c22}
+.bottom>*{
+  flex:1;
+  box-shadow:0 3px 15px #12353c22
+}
 .drawbar{
   position:absolute;
   z-index:820;
   left:12px;
   right:12px;
-  bottom:32px;
+  bottom:35px;
   background:white;
   border-radius:18px;
   padding:10px;
@@ -226,9 +296,13 @@ header{
   flex-wrap:wrap;
   max-width:650px;
   margin:auto;
-  box-shadow:0 4px 25px #12353c33;
+  box-shadow:0 4px 25px #12353c33
 }
-.drawbar button{flex:1;font-size:13px}
+.drawbar button{
+  flex:1;
+  font-size:13px;
+  min-width:90px
+}
 .drawbar .selected{background:#153e48;color:white}
 .sheet{
   position:absolute;
@@ -238,36 +312,64 @@ header{
   right:0;
   border-radius:23px 23px 0 0;
   background:white;
-  padding:22px 20px max(25px,env(safe-area-inset-bottom));
-  max-height:72dvh;
+  padding:20px 20px max(25px,env(safe-area-inset-bottom));
+  max-height:68dvh;
   overflow:auto;
-  box-shadow:0 -5px 35px #122f3b30;
+  box-shadow:0 -5px 35px #122f3b30
 }
-.sheetHead{display:flex;gap:10px;align-items:start}
+.sheetHead{
+  display:flex;
+  gap:10px;
+  align-items:start
+}
 .sheetHead div{flex:1}
-.sheet h2{margin:7px 0}
-.sheet p{color:#637d76;margin:5px 0}
+.sheet h2{margin:7px 0;font-size:21px}
+.sheet p{
+  color:#637d76;
+  margin:5px 0;
+  overflow-wrap:anywhere
+}
 .sheet img{
   width:100%;
   max-height:220px;
   object-fit:cover;
   border-radius:14px;
-  margin:12px 0;
+  margin:12px 0
 }
 .actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
-  margin-top:15px;
+  margin-top:15px
 }
-.serial{color:#087f72;font-weight:800;font-size:12px}
+.serial{
+  color:#087f72;
+  font-weight:800;
+  font-size:12px
+}
+.navBar{
+  position:absolute;
+  z-index:840;
+  bottom:35px;
+  left:12px;
+  right:12px;
+  max-width:550px;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 4px 24px #12353c30;
+  padding:12px
+}
+.navBar strong{display:block;margin-bottom:3px}
+.navBar small{color:#607b72}
+.navBar .row{margin-top:10px}
+.navBar .btn{padding:9px;font-size:13px}
 
 .list{max-width:900px;padding:20px;margin:auto}
 .listTop{
   display:flex;
   align-items:center;
   gap:10px;
-  margin-bottom:18px;
+  margin-bottom:18px
 }
 .listTop h2{flex:1;margin:0}
 .shopRow{
@@ -278,13 +380,13 @@ header{
   margin:10px 0;
   background:white;
   border-radius:16px;
-  border:1px solid #e0eae5;
+  border:1px solid #e0eae5
 }
 .shopRow img{
   width:60px;
   height:60px;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:12px
 }
 .shopRow .info{flex:1;min-width:0}
 .shopRow strong{display:block}
@@ -292,8 +394,9 @@ header{
   display:block;
   color:#6e827b;
   margin:5px 0;
-  overflow-wrap:anywhere;
+  overflow-wrap:anywhere
 }
+.search{margin-bottom:15px}
 
 .modal{
   border:0;
@@ -302,32 +405,24 @@ header{
   max-height:88dvh;
   padding:24px;
   color:#15333e;
-  box-shadow:0 20px 60px #102e3850;
+  box-shadow:0 20px 60px #102e3850
 }
 .modal::backdrop{
   background:#102e387d;
-  backdrop-filter:blur(3px);
+  backdrop-filter:blur(3px)
 }
 .modal h2{margin:0 0 14px}
-.modal label{display:block;font-weight:750;margin:13px 0 6px}
-.modal input{
-  width:100%;
-  border:1px solid #cdded5;
-  border-radius:11px;
-  padding:12px;
-}
 .modal footer{
   display:flex;
   justify-content:end;
   gap:8px;
-  margin-top:22px;
+  margin-top:22px
 }
 .stack{display:grid;gap:9px}
-
 .toast{
   position:fixed;
   z-index:4000;
-  top:85px;
+  top:100px;
   left:50%;
   transform:translateX(-50%);
   max-width:90%;
@@ -337,77 +432,72 @@ header{
   color:white;
   box-shadow:0 5px 22px #12353c30;
   font-size:14px;
-  text-align:center;
+  text-align:center
 }
 .toast:empty{display:none}
+
 .pin{background:none;border:0}
-.pin span{
-  display:grid;
-  place-items:center;
-  width:32px;
-  height:32px;
-  background:#087f72;
-  color:white;
+.pin svg{filter:drop-shadow(0 3px 3px #0004)}
+.blueDot{background:none;border:0}
+.blueDot span{
+  display:block;
+  width:20px;
+  height:20px;
   border:3px solid white;
-  border-radius:50% 50% 50% 6px;
-  transform:rotate(-45deg);
-  box-shadow:0 3px 10px #153e4844;
-}
-.pin b{transform:rotate(45deg);font-size:12px}
-.leaflet-tooltip.shopLabel{
-  border:1px solid #c4ded3;
-  border-radius:8px;
-  font-weight:750;
-  box-shadow:0 3px 10px #122e3820;
+  background:#2684ff;
+  border-radius:50%;
+  box-shadow:0 0 0 9px #2684ff25,0 2px 8px #0004
 }
 .vertex{
   border:3px solid white;
   background:#f16b38;
   border-radius:50%;
-  box-shadow:0 3px 12px #12353c50;
+  box-shadow:0 3px 12px #12353c50
 }
 .vertex.active{
   background:#163d49;
-  border:3px solid #ffbb82;
+  border-color:#ffbb82
+}
+.leaflet-tooltip.shopLabel{
+  border:1px solid #c4ded3;
+  border-radius:8px;
+  font-weight:750
 }
 .leaflet-control-zoom{
-  margin-top:100px!important;
+  margin-top:130px!important;
   border:0!important;
-  box-shadow:0 4px 20px #12353c20!important;
+  box-shadow:0 4px 20px #12353c20!important
 }
-.leaflet-bar a{border-radius:8px!important}
 .leaflet-control-attribution{font-size:10px}
+.leaflet-control-scale{margin-bottom:15px!important}
 
 @media(max-width:600px){
   .brand{font-size:23px}
-  .headActions .btn{padding:9px 11px;font-size:12px}
-  .mapTitle{max-width:calc(100vw - 136px)}
   .bottom .btn{font-size:13px;padding:12px 8px}
   .stats{padding:15px 19px}
   .shopRow{gap:8px}
   .shopRow .btn{padding:10px}
-  .drawbar button{min-width:90px}
   .modal{padding:20px}
+  .searchForm input{font-size:14px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<section id="loginView" class="view on">
+<section id="loadingView" class="view on">
+  <div class="loading">
+    <div class="spinner" aria-label="লোড হচ্ছে"></div>
+  </div>
+</section>
+
+<section id="loginView" class="view">
   <div class="loginCard">
     <h1>SR Atlas</h1>
-
     <form id="loginForm">
       <label for="email">ইমেইল</label>
-      <input
-        id="email"
-        type="email"
-        required
-        autocomplete="username"
-      >
+      <input id="email" type="email" required autocomplete="username">
 
       <label for="password">পাসওয়ার্ড</label>
       <input
@@ -418,7 +508,6 @@ header{
       >
 
       <p id="loginError" class="error" role="alert"></p>
-
       <button id="loginSubmit" class="btn primary">লগইন</button>
     </form>
   </div>
@@ -426,15 +515,9 @@ header{
 
 <section id="homeView" class="view">
   <header>
-    <div class="wrap head">
+    <div class="head">
       <h1 class="brand">SR Atlas</h1>
-
-      <div class="headActions">
-        <button id="account" class="btn">লগআউট</button>
-        <button id="newSR" class="btn primary" data-write>
-          + SR add
-        </button>
-      </div>
+      <button id="newSR" class="btn primary" data-write>+ SR add</button>
     </div>
   </header>
 
@@ -444,19 +527,11 @@ header{
         <strong id="srCount">0</strong>
         <small>SR</small>
       </div>
-
       <div>
         <strong id="shopCount">0</strong>
         <small>দোকান</small>
       </div>
     </div>
-
-    <input
-      id="srSearch"
-      class="search"
-      placeholder="SR খুঁজুন"
-      aria-label="SR খুঁজুন"
-    >
 
     <div id="cards" class="cards"></div>
   </main>
@@ -470,13 +545,7 @@ header{
       <button id="listMap" class="btn primary">ম্যাপ</button>
     </div>
 
-    <input
-      id="shopSearch"
-      class="search"
-      placeholder="দোকান খুঁজুন"
-      aria-label="দোকান খুঁজুন"
-    >
-
+    <input id="shopSearch" class="search" placeholder="দোকান খুঁজুন">
     <div id="shopList"></div>
   </main>
 </section>
@@ -487,16 +556,36 @@ header{
   <div class="toolbar">
     <button id="mapBack" class="icon" aria-label="ফিরুন">‹</button>
 
-    <div class="mapTitle">
-      <strong id="mapTitle"></strong>
-      <small id="mapSub"></small>
-    </div>
+    <div class="searchBox">
+      <form id="placeForm" class="searchForm">
+        <input
+          id="placeQuery"
+          placeholder="জায়গা বা রাস্তা খুঁজুন"
+          aria-label="জায়গা বা রাস্তা খুঁজুন"
+          autocomplete="off"
+        >
+        <button id="placeSubmit" aria-label="সার্চ">⌕</button>
+        <button
+          id="clearSearch"
+          type="button"
+          aria-label="সার্চ বন্ধ"
+        >×</button>
+      </form>
 
-    <div class="tools">
-      <button id="locate" class="icon" aria-label="আমার লোকেশন">◎</button>
-      <button id="fit" class="icon" aria-label="সম্পূর্ণ এলাকা">⛶</button>
-      <button id="menu" class="icon" aria-label="SR সম্পাদনা">⋮</button>
+      <div id="mapTitle" class="mapCaption"></div>
+      <div id="placeResults" class="results" hidden></div>
     </div>
+  </div>
+
+  <div class="tools">
+    <button id="locate" class="icon" aria-label="আমার লোকেশন">◎</button>
+
+    <button id="compass" class="icon" aria-label="ম্যাপ ঘোরান">
+      <span id="compassArrow" class="compass">➤</span>
+    </button>
+
+    <button id="fit" class="icon" aria-label="সম্পূর্ণ এলাকা">⛶</button>
+    <button id="menu" class="icon" aria-label="SR সম্পাদনা">⋮</button>
   </div>
 
   <div id="bottom" class="bottom">
@@ -512,6 +601,17 @@ header{
     <button id="saveArea" class="btn primary" data-write>সংরক্ষণ</button>
   </div>
 
+  <div id="navBar" class="navBar" hidden>
+    <strong id="navInfo"></strong>
+    <small id="navName"></small>
+
+    <div class="row">
+      <button id="follow" class="btn primary">অনুসরণ</button>
+      <button id="routeOverview" class="btn">পুরো রুট</button>
+      <button id="stopNav" class="btn danger">বন্ধ</button>
+    </div>
+  </div>
+
   <div id="sheet" class="sheet" hidden></div>
 </section>
 
@@ -523,9 +623,7 @@ header{
     <input id="srName" required maxlength="80">
 
     <footer>
-      <button type="button" class="btn" data-close="nameDialog">
-        বাতিল
-      </button>
+      <button type="button" class="btn" data-close>বাতিল</button>
       <button class="btn primary" data-write>পরবর্তী ধাপ</button>
     </footer>
   </form>
@@ -542,7 +640,7 @@ header{
   </div>
 
   <footer>
-    <button class="btn" data-close="editDialog">বন্ধ</button>
+    <button class="btn" data-close>বন্ধ</button>
   </footer>
 </dialog>
 
@@ -565,15 +663,14 @@ header{
     <p id="shopError" class="error" role="alert"></p>
 
     <footer>
-      <button type="button" class="btn" data-close="shopDialog">
-        বাতিল
-      </button>
+      <button type="button" class="btn" data-close>বাতিল</button>
       <button class="btn primary" data-write>সংরক্ষণ</button>
     </footer>
   </form>
 </dialog>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
 
 <script type="module">
 import {
@@ -584,7 +681,8 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut
+  setPersistence,
+  browserLocalPersistence
 } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 
 import {
@@ -594,95 +692,128 @@ import {
   runTransaction
 } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAhlvysObnxXKg2HO3b0z0U8aBwQ6Xakos",
-  authDomain: "rahad-map-ab322.firebaseapp.com",
-  databaseURL: "https://rahad-map-ab322-default-rtdb.firebaseio.com",
-  projectId: "rahad-map-ab322",
-  storageBucket: "rahad-map-ab322.firebasestorage.app",
-  messagingSenderId: "111356994872",
-  appId: "1:111356994872:web:f583173bf0fcc301ef0dcd",
-  measurementId: "G-Q43YDPJJZF"
-};
+const app = initializeApp({
+  apiKey: 'AIzaSyAhlvysObnxXKg2HO3b0z0U8aBwQ6Xakos',
+  authDomain: 'rahad-map-ab322.firebaseapp.com',
+  databaseURL: 'https://rahad-map-ab322-default-rtdb.firebaseio.com',
+  projectId: 'rahad-map-ab322',
+  storageBucket: 'rahad-map-ab322.firebasestorage.app',
+  messagingSenderId: '111356994872',
+  appId: '1:111356994872:web:f583173bf0fcc301ef0dcd',
+  measurementId: 'G-Q43YDPJJZF'
+});
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const atlas = ref(db, 'srAtlas');
-
 const $ = id => document.getElementById(id);
-const clone = value => JSON.parse(JSON.stringify(value));
+const copy = x => JSON.parse(JSON.stringify(x));
 
-let state = {srs: {}, nextGlobal: 1};
-let current = null;
-let mode = 'login';
-let ready = false;
-let connected = false;
-let allowed = false;
-let busy = false;
-let preparingShop = false;
+const uid = () =>
+  crypto.randomUUID?.() ||
+  Date.now() + '-' + Math.random().toString(36).slice(2);
 
-let unsubscribe = null;
-let memberUnsubscribe = null;
-
-let drawing = false;
-let editingArea = null;
-let editingName = null;
-let pendingName = '';
-let points = [];
-let selectedCorner = -1;
-let addingCorner = false;
-let zooming = false;
-let areaPoly = null;
-let handles = [];
-
-let selected = null;
-let shownShop = null;
-
-let watch = null;
-let myPos = null;
-let myMarker = null;
-let accuracy = null;
-let centerNext = false;
-
-let route = null;
-let routeController = null;
-
-const colors = [
-  {bg:'#eaf2ff', main:'#2463df', edge:'#d2e3ff'},
-  {bg:'#e7f7ee', main:'#128453', edge:'#c7ead7'},
-  {bg:'#ffeded', main:'#ce4141', edge:'#ffd3d3'},
-  {bg:'#f1ebff', main:'#7a4bd0', edge:'#ded1fb'},
-  {bg:'#fff3df', main:'#b57812', edge:'#f6dfb3'},
-  {bg:'#e6f7fc', main:'#1488a2', edge:'#c4e8f1'},
-  {bg:'#ffeaf4', main:'#be397b', edge:'#f5cee1'},
-  {bg:'#eef0f4', main:'#546276', edge:'#d9dfe7'}
-];
-
-const sr = () => state.srs?.[current];
-const shops = item => Object.values(item?.shops || {});
-
-function srs() {
-  return Object.values(state.srs || {}).sort((a, b) =>
-    (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0) ||
-    String(a.id).localeCompare(String(b.id))
-  );
-}
-
-function id() {
-  return crypto.randomUUID?.() ||
-    Date.now() + '-' + Math.random().toString(36).slice(2);
-}
-
-function esc(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({
+const esc = x =>
+  String(x ?? '').replace(/[&<>"']/g, c => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;'
   })[c]);
-}
+
+const readStore = key => {
+  try {
+    return JSON.parse(sessionStorage.getItem(key));
+  } catch {
+    return null;
+  }
+};
+
+const writeStore = (key, value) => {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+};
+
+let state = {srs: {}, nextGlobal: 1};
+let current = null;
+let mode = 'loading';
+let ready = false;
+let allowed = false;
+let connected = false;
+let busy = false;
+let preparing = false;
+let sessionUser = null;
+
+let dataOff = null;
+let memberOff = null;
+let authEpoch = 0;
+let restored = false;
+
+let drawing = false;
+let editingArea = null;
+let editingName = null;
+let pendingName = '';
+let points = [];
+let chosen = -1;
+let adding = false;
+let zooming = false;
+let handles = [];
+let outline = null;
+
+let selected = null;
+let selectedName = '';
+let selectedMarker = null;
+let shownShop = null;
+
+let watch = null;
+let myPos = null;
+let myMarker = null;
+let accuracy = null;
+let previousPosition = null;
+let follow = false;
+let headingUp = false;
+let heading = 0;
+
+let navigation = null;
+let routeLine = null;
+let routeHalo = null;
+let routePath = [];
+let routeLengths = [];
+let routeTotal = 0;
+let routeDuration = 0;
+let routeProgress = 0;
+let routeController = null;
+let routeEpoch = 0;
+let lastRouteAt = 0;
+let lastRouteOrigin = null;
+
+let searchController = null;
+let searchEpoch = 0;
+let searchAt = 0;
+
+const colors = [
+  ['#eaf2ff', '#2463df', '#d2e3ff'],
+  ['#e7f7ee', '#128453', '#c7ead7'],
+  ['#ffeded', '#ce4141', '#ffd3d3'],
+  ['#f1ebff', '#7a4bd0', '#ded1fb'],
+  ['#fff3df', '#b57812', '#f6dfb3'],
+  ['#e6f7fc', '#1488a2', '#c4e8f1'],
+  ['#ffeaf4', '#be397b', '#f5cee1']
+];
+
+const sr = () => state.srs?.[current];
+const shops = item => Object.values(item?.shops || {});
+
+const srs = () =>
+  Object.values(state.srs || {}).sort((a, b) =>
+    (a.createdAt || 0) - (b.createdAt || 0) ||
+    String(a.id).localeCompare(String(b.id))
+  );
+
+const storeKey = () =>
+  sessionUser ? 'atlas-view-' + sessionUser : null;
 
 function toast(message) {
   $('toast').textContent = message;
@@ -695,7 +826,7 @@ function toast(message) {
   }
 }
 
-function errorText(error) {
+function err(error) {
   const code = error?.code || '';
   const message = error?.message || '';
 
@@ -707,26 +838,25 @@ function errorText(error) {
     return 'ইমেইল বা পাসওয়ার্ড ঠিক নয়।';
   }
 
-  if (/operation-not-allowed/.test(code)) {
-    return 'Email/Password login চালু নেই।';
-  }
-
   if (/network/.test(code)) {
-    return 'ইন্টারনেট সংযোগ পরীক্ষা করুন।';
+    return 'ইন্টারনেট পরীক্ষা করুন।';
   }
 
   if (/too-many/.test(code)) {
     return 'একটু পরে আবার চেষ্টা করুন।';
   }
 
+  if (/operation-not-allowed/.test(code)) {
+    return 'Email/Password login চালু করুন।';
+  }
+
   return message || 'কাজটি সম্পন্ন হয়নি।';
 }
 
-function syncStatus() {
-  const good = !!auth.currentUser && connected && ready && allowed;
-
+function status() {
   document.querySelectorAll('[data-write]').forEach(button => {
-    button.disabled = !good || busy || preparingShop;
+    button.disabled =
+      !ready || !allowed || !connected || busy || preparing;
   });
 }
 
@@ -743,69 +873,26 @@ function show(view) {
   }
 }
 
-async function mutate(change) {
-  if (!auth.currentUser || !allowed || !ready || !connected) {
-    throw Error('ইন্টারনেট সংযোগ ও অ্যাকাউন্টের অনুমতি পরীক্ষা করুন।');
-  }
-
-  if (busy) {
-    throw Error('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
-  }
-
-  busy = true;
-  syncStatus();
-
-  try {
-    const result = await runTransaction(
-      atlas,
-      data => {
-        const next = data || {srs: {}, nextGlobal: 1};
-
-        next.srs ||= {};
-        next.nextGlobal = Math.max(1, Number(next.nextGlobal) || 1);
-
-        change(next);
-        return next;
-      },
-      {applyLocally: false}
-    );
-
-    if (!result.committed) {
-      throw Error('সংরক্ষণ হয়নি।');
-    }
-
-    state = result.snapshot.val() || {srs: {}, nextGlobal: 1};
-    renderAll();
-    toast('সংরক্ষণ হয়েছে ✓');
-  } finally {
-    busy = false;
-    syncStatus();
-  }
-}
-
 const map = L.map('map', {
-  zoomControl: true
+  rotate: true,
+  bearing: 0,
+  touchRotate: true,
+  rotateControl: false,
+  maxZoom: 22,
+  zoomSnap: .5,
+  zoomDelta: .5
 }).setView([23.8103, 90.4125], 13);
 
-const tiles = L.tileLayer(
+L.tileLayer(
   'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
-    maxZoom: 19,
+    maxNativeZoom: 19,
+    maxZoom: 22,
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">' +
-      'OpenStreetMap</a> contributors'
+      'OpenStreetMap</a>'
   }
 ).addTo(map);
-
-let tileErrors = 0;
-
-tiles.on('tileerror', () => {
-  if (++tileErrors === 3) {
-    toast('ম্যাপ লোড হয়নি। সংযোগ পরীক্ষা করুন।');
-  }
-});
-
-tiles.on('tileload', () => tileErrors = 0);
 
 L.control.scale({
   imperial: false,
@@ -815,85 +902,36 @@ L.control.scale({
 const mapLayer = L.layerGroup().addTo(map);
 const drawLayer = L.layerGroup().addTo(map);
 
+function bearing(value) {
+  map.setBearing?.(value);
+
+  $('compassArrow').style.transform =
+    `rotate(${(map.getBearing?.() || 0) - 90}deg)`;
+}
+
+map.on('rotate', () => {
+  $('compassArrow').style.transform =
+    `rotate(${(map.getBearing?.() || 0) - 90}deg)`;
+
+  remember();
+});
+
 function ring(item) {
-  if (Array.isArray(item?.polygon)) return item.polygon;
-
-  if (item?.bounds) {
-    return [
-      [item.bounds.s, item.bounds.w],
-      [item.bounds.n, item.bounds.w],
-      [item.bounds.n, item.bounds.e],
-      [item.bounds.s, item.bounds.e]
-    ];
-  }
-
-  return [];
-}
-
-function validRing(vertices) {
-  if (!Array.isArray(vertices) || vertices.length < 3) return false;
-
-  if (!vertices.every(point =>
-    Array.isArray(point) &&
-    point.length === 2 &&
-    Number.isFinite(point[0]) &&
-    Math.abs(point[0]) <= 85 &&
-    Number.isFinite(point[1]) &&
-    Math.abs(point[1]) <= 180
-  )) return false;
-
-  const area = vertices.reduce((total, a, index) => {
-    const b = vertices[(index + 1) % vertices.length];
-    return total + a[1] * b[0] - b[1] * a[0];
-  }, 0);
-
-  return Math.abs(area) > 1e-12;
-}
-
-function selfCross(vertices) {
-  const cross = (a, b, c) =>
-    (b[1] - a[1]) * (c[0] - a[0]) -
-    (b[0] - a[0]) * (c[1] - a[1]);
-
-  const between = (a, b, c) =>
-    Math.min(a[0], b[0]) <= c[0] &&
-    c[0] <= Math.max(a[0], b[0]) &&
-    Math.min(a[1], b[1]) <= c[1] &&
-    c[1] <= Math.max(a[1], b[1]);
-
-  for (let i = 0; i < vertices.length; i++) {
-    for (let j = i + 1; j < vertices.length; j++) {
-      if (
-        j === i + 1 ||
-        (i === 0 && j === vertices.length - 1)
-      ) continue;
-
-      const a = vertices[i];
-      const b = vertices[(i + 1) % vertices.length];
-      const c = vertices[j];
-      const d = vertices[(j + 1) % vertices.length];
-
-      const x = cross(a, b, c);
-      const y = cross(a, b, d);
-      const z = cross(c, d, a);
-      const w = cross(c, d, b);
-
-      if (
-        (x * y < 0 && z * w < 0) ||
-        (x === 0 && between(a, b, c)) ||
-        (y === 0 && between(a, b, d)) ||
-        (z === 0 && between(c, d, a)) ||
-        (w === 0 && between(c, d, b))
-      ) return true;
-    }
-  }
-
-  return false;
+  return Array.isArray(item?.polygon)
+    ? item.polygon
+    : item?.bounds
+      ? [
+          [item.bounds.s, item.bounds.w],
+          [item.bounds.n, item.bounds.w],
+          [item.bounds.n, item.bounds.e],
+          [item.bounds.s, item.bounds.e]
+        ]
+      : [];
 }
 
 function inside(point, item) {
   const vertices = ring(item);
-  let result = false;
+  let yes = false;
 
   for (
     let i = 0, j = vertices.length - 1;
@@ -902,7 +940,6 @@ function inside(point, item) {
   ) {
     const a = vertices[i];
     const b = vertices[j];
-
     const dx = b[1] - a[1];
     const dy = b[0] - a[0];
 
@@ -917,8 +954,8 @@ function inside(point, item) {
       t >= 0 &&
       t <= 1 &&
       Math.hypot(
-        point.lng - (a[1] + t * dx),
-        point.lat - (a[0] + t * dy)
+        point.lng - a[1] - t * dx,
+        point.lat - a[0] - t * dy
       ) < 1e-9
     ) return true;
 
@@ -929,88 +966,183 @@ function inside(point, item) {
         (point.lat - a[0]) /
         (b[0] - a[0]) + a[1]
     ) {
-      result = !result;
+      yes = !yes;
     }
   }
 
-  return result;
+  return yes;
+}
+
+function validPolygon(vertices) {
+  if (
+    vertices.length < 3 ||
+    !vertices.every(point =>
+      point.length === 2 &&
+      Number.isFinite(point[0]) &&
+      Math.abs(point[0]) <= 85 &&
+      Number.isFinite(point[1]) &&
+      Math.abs(point[1]) <= 180
+    )
+  ) return false;
+
+  const cross = (a, b, c) =>
+    (b[1] - a[1]) * (c[0] - a[0]) -
+    (b[0] - a[0]) * (c[1] - a[1]);
+
+  const on = (a, b, c) =>
+    Math.min(a[0], b[0]) <= c[0] &&
+    c[0] <= Math.max(a[0], b[0]) &&
+    Math.min(a[1], b[1]) <= c[1] &&
+    c[1] <= Math.max(a[1], b[1]);
+
+  let area = 0;
+
+  for (let i = 0; i < vertices.length; i++) {
+    const a = vertices[i];
+    const b = vertices[(i + 1) % vertices.length];
+
+    area += a[1] * b[0] - b[1] * a[0];
+
+    if (map.distance(a, b) < .2) return false;
+
+    for (let j = i + 1; j < vertices.length; j++) {
+      if (
+        j === i + 1 ||
+        (i === 0 && j === vertices.length - 1)
+      ) continue;
+
+      const c = vertices[j];
+      const d = vertices[(j + 1) % vertices.length];
+
+      const x = cross(a, b, c);
+      const y = cross(a, b, d);
+      const z = cross(c, d, a);
+      const w = cross(c, d, b);
+
+      if (
+        x * y < 0 && z * w < 0 ||
+        x === 0 && on(a, b, c) ||
+        y === 0 && on(a, b, d) ||
+        z === 0 && on(c, d, a) ||
+        w === 0 && on(c, d, b)
+      ) return false;
+    }
+  }
+
+  return Math.abs(area) > 1e-12;
 }
 
 function fit() {
   const vertices = drawing ? points : ring(sr());
 
   if (vertices.length) {
-    map.fitBounds(L.latLngBounds(vertices), {
-      paddingTopLeft: [45, 95],
-      paddingBottomRight: [45, 110],
-      maxZoom: 17
+    map.fitBounds(vertices, {
+      paddingTopLeft: [45, 110],
+      paddingBottomRight: [65, 140],
+      maxZoom: 18
     });
   }
 }
 
-function renderCards() {
-  const items = srs();
-  const query = $('srSearch').value.trim().toLowerCase();
+function pin(color = '#e9433f', text = '') {
+  return L.divIcon({
+    className: 'pin',
+    html:
+      `<svg width="36" height="46" viewBox="0 0 36 46" ` +
+      `xmlns="http://www.w3.org/2000/svg">` +
+      `<path d="M18 44C15 39 2 25 2 18a16 16 0 1 1 32 0` +
+      `c0 7-13 21-16 26Z" fill="${color}" ` +
+      `stroke="white" stroke-width="2"/>` +
+      `<circle cx="18" cy="18" r="7" fill="white"/>` +
+      (
+        text
+          ? `<text x="18" y="21" text-anchor="middle" ` +
+            `font-size="9" font-weight="bold" fill="${color}">` +
+            `${Number(text) || ''}</text>`
+          : ''
+      ) +
+      `</svg>`,
+    iconSize: [36, 46],
+    iconAnchor: [18, 44]
+  });
+}
 
-  $('srCount').textContent = items.length;
-  $('shopCount').textContent = items.reduce(
+function clearPin() {
+  if (selectedMarker) {
+    map.removeLayer(selectedMarker);
+  }
+
+  selectedMarker = null;
+  selected = null;
+  selectedName = '';
+}
+
+function putPin(position, name = 'নির্বাচিত জায়গা') {
+  clearPin();
+
+  selected = L.latLng(position);
+  selectedName = name;
+
+  selectedMarker = L.marker(selected, {
+    icon: pin(),
+    draggable: true,
+    zIndexOffset: 1000
+  }).addTo(map);
+
+  selectedMarker.on('dragend', () => {
+    selected = selectedMarker.getLatLng();
+    selectedName = 'নির্বাচিত জায়গা';
+    pointSheet();
+    remember();
+  });
+
+  selectedMarker.on('click', pointSheet);
+}
+
+function renderCards() {
+  $('srCount').textContent = srs().length;
+
+  $('shopCount').textContent = srs().reduce(
     (total, item) => total + shops(item).length,
     0
   );
 
   $('cards').replaceChildren();
 
-  items.forEach((item, index) => {
-    if (!String(item.name).toLowerCase().includes(query)) return;
-
+  srs().forEach((item, index) => {
     const color = colors[index % colors.length];
     const card = document.createElement('article');
     card.className = 'card';
 
-    card.style.setProperty('--card-bg', color.bg);
-    card.style.setProperty('--card-color', color.main);
-    card.style.setProperty('--card-edge', color.edge);
+    ['--bg', '--color', '--edge'].forEach((key, i) => {
+      card.style.setProperty(key, color[i]);
+    });
 
-    const badge = document.createElement('span');
-    badge.className = 'badge';
-    badge.textContent = '⌖';
+    card.innerHTML =
+      `<span class="badge">⌖</span>` +
+      `<button class="cardTitle">${esc(item.name)}</button>` +
+      `<small>${shops(item).length}টি দোকান</small>` +
+      `<div class="row">` +
+      `<button class="btn primary">Open Location</button>` +
+      `<button class="btn">Shop List</button>` +
+      `</div>`;
 
-    const title = document.createElement('button');
-    title.className = 'cardTitle';
-    title.textContent = item.name;
-
-    title.onclick = () => {
+    card.querySelector('.cardTitle').onclick = () => {
       current = item.id;
-      $('editTitle').textContent = item.name;
-      $('editDialog').showModal();
+      openEdit();
     };
 
-    const count = document.createElement('small');
-    count.textContent = shops(item).length + 'টি দোকান';
+    const buttons = card.querySelectorAll('.row button');
 
-    const row = document.createElement('div');
-    row.className = 'row';
+    buttons[0].onclick = () => visit('map', item.id);
+    buttons[1].onclick = () => visit('list', item.id);
 
-    const mapButton = document.createElement('button');
-    mapButton.className = 'btn primary';
-    mapButton.textContent = 'Open Location';
-    mapButton.onclick = () => openMap(item.id);
-
-    const listButton = document.createElement('button');
-    listButton.className = 'btn';
-    listButton.textContent = 'Shop List';
-    listButton.onclick = () => openList(item.id);
-
-    row.append(mapButton, listButton);
-    card.append(badge, title, count, row);
     $('cards').append(card);
   });
 
-  if (!$('cards').children.length && ready) {
+  if (!srs().length && ready) {
     $('cards').innerHTML =
-      '<div class="empty">' +
-      (query ? 'পাওয়া যায়নি' : 'কোনো SR নেই') +
-      '</div>';
+      '<div class="empty">কোনো SR নেই</div>';
   }
 }
 
@@ -1019,13 +1151,17 @@ function renderMap() {
 
   if (!sr() || drawing) return;
 
-  const index = srs().findIndex(item => item.id === current);
-  const color = colors[Math.max(0, index) % colors.length];
+  const index = Math.max(
+    0,
+    srs().findIndex(item => item.id === current)
+  );
+
+  const color = colors[index % colors.length][1];
   const vertices = ring(sr());
 
   if (vertices.length) {
     L.polygon(vertices, {
-      color: color.main,
+      color,
       weight: 3,
       fillOpacity: .025,
       dashArray: '9 6',
@@ -1034,171 +1170,33 @@ function renderMap() {
   }
 
   shops(sr()).forEach(shop => {
-    const marker = L.marker(
-      [shop.lat, shop.lng],
-      {
-        icon: L.divIcon({
-          className: 'pin',
-          html:
-            `<span style="background:${color.main}">` +
-            `<b>${Number(shop.srSerial) || '•'}</b></span>`,
-          iconSize: [32, 38],
-          iconAnchor: [16, 36]
-        })
-      }
-    ).addTo(mapLayer);
+    const marker = L.marker([shop.lat, shop.lng], {
+      icon: pin(color, shop.srSerial)
+    }).addTo(mapLayer);
 
     marker.bindTooltip(esc(shop.name), {
       permanent: map.getZoom() >= 16,
       direction: 'right',
-      offset: [12, -20],
+      offset: [12, -25],
       className: 'shopLabel'
     });
 
-    marker.on('click', () => viewShop(shop.id));
+    marker.on('click', () => {
+      visit('map', current, shop.id);
+    });
   });
 
-  $('mapTitle').textContent = sr().name;
-  $('mapSub').textContent = shops(sr()).length + 'টি দোকান';
-}
-
-map.on('zoomend', () => {
-  if (mode === 'map' && !drawing) renderMap();
-});
-
-function clearRoute() {
-  routeController?.abort();
-  routeController = null;
-
-  if (route) {
-    map.removeLayer(route);
-    route = null;
-  }
-}
-
-function stopGPS() {
-  if (watch !== null) navigator.geolocation?.clearWatch(watch);
-
-  watch = null;
-  myPos = null;
-  centerNext = false;
-
-  if (myMarker) map.removeLayer(myMarker);
-  if (accuracy) map.removeLayer(accuracy);
-
-  myMarker = null;
-  accuracy = null;
-}
-
-function gps(center = true) {
-  if (!navigator.geolocation || !isSecureContext) {
-    toast('লোকেশনের জন্য HTTPS প্রয়োজন।');
-    return;
-  }
-
-  centerNext = center;
-
-  if (watch !== null) {
-    if (center && myPos) {
-      map.setView(myPos, 17);
-      centerNext = false;
-    }
-    return;
-  }
-
-  watch = navigator.geolocation.watchPosition(
-    position => {
-      myPos = [
-        position.coords.latitude,
-        position.coords.longitude
-      ];
-
-      const radius = Math.min(position.coords.accuracy, 2000);
-
-      if (myMarker) {
-        myMarker.setLatLng(myPos);
-        accuracy.setLatLng(myPos).setRadius(radius);
-      } else {
-        accuracy = L.circle(myPos, {
-          radius,
-          weight: 0,
-          fillColor: '#268bf4',
-          fillOpacity: .08,
-          interactive: false
-        }).addTo(map);
-
-        myMarker = L.circleMarker(myPos, {
-          radius: 8,
-          color: '#fff',
-          weight: 3,
-          fillColor: '#237cf4',
-          fillOpacity: 1
-        }).addTo(map).bindTooltip('আপনার লোকেশন');
-      }
-
-      if (centerNext) {
-        map.setView(myPos, 17);
-        centerNext = false;
-      }
-    },
-    error => {
-      stopGPS();
-      toast(
-        error.code === 1
-          ? 'লোকেশন অনুমতি দিন।'
-          : 'লোকেশন পাওয়া যায়নি।'
-      );
-    },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 3000,
-      timeout: 15000
-    }
-  );
-}
-
-function openMap(key, shopId = null) {
-  current = key;
-  if (!sr()) return;
-
-  selected = null;
-  shownShop = null;
-  clearRoute();
-  $('sheet').hidden = true;
-
-  show('map');
-  renderMap();
-
-  requestAnimationFrame(() => {
-    map.invalidateSize();
-    if (shopId) viewShop(shopId);
-    else fit();
-  });
-
-  gps(false);
-}
-
-function openList(key) {
-  current = key;
-  if (!sr()) return;
-
-  stopGPS();
-  clearRoute();
-  $('sheet').hidden = true;
-  shownShop = null;
-  $('shopSearch').value = '';
-
-  show('list');
-  renderList();
+  $('mapTitle').textContent =
+    sr().name + ' · ' + shops(sr()).length + 'টি দোকান';
 }
 
 function renderList() {
   if (!sr()) return;
 
   $('listTitle').textContent = sr().name;
-  const query = $('shopSearch').value.trim().toLowerCase();
-
   $('shopList').replaceChildren();
+
+  const query = $('shopSearch').value.trim().toLowerCase();
 
   shops(sr())
     .sort((a, b) => a.srSerial - b.srSerial)
@@ -1211,28 +1209,25 @@ function renderList() {
       const card = document.createElement('article');
       card.className = 'shopRow';
 
+      card.innerHTML =
+        `<div class="info">` +
+        `<span class="serial">সাইট #${Number(shop.globalSerial)}` +
+        ` · SR #${Number(shop.srSerial)}</span>` +
+        `<strong>${esc(shop.name)}</strong>` +
+        `<small>${esc(shop.owner)} · ${esc(shop.phone)}</small>` +
+        `</div><button class="btn">View</button>`;
+
       if (shop.photo?.startsWith('data:image/')) {
         const image = document.createElement('img');
         image.src = shop.photo;
         image.alt = shop.name;
-        card.append(image);
+        card.prepend(image);
       }
 
-      const info = document.createElement('div');
-      info.className = 'info';
+      card.querySelector('button').onclick = () => {
+        visit('map', current, shop.id);
+      };
 
-      info.innerHTML =
-        `<span class="serial">সাইট #${Number(shop.globalSerial)}` +
-        ` · SR #${Number(shop.srSerial)}</span>` +
-        `<strong>${esc(shop.name)}</strong>` +
-        `<small>${esc(shop.owner)} · ${esc(shop.phone)}</small>`;
-
-      const button = document.createElement('button');
-      button.className = 'btn';
-      button.textContent = 'View';
-      button.onclick = () => openMap(current, shop.id);
-
-      card.append(info, button);
       $('shopList').append(card);
     });
 
@@ -1240,6 +1235,99 @@ function renderList() {
     $('shopList').innerHTML =
       '<div class="empty">কোনো দোকান নেই</div>';
   }
+}
+
+function closeSheet() {
+  $('sheet').hidden = true;
+  shownShop = null;
+  remember();
+}
+
+function sheetHead(title, subtitle, serial = '') {
+  const sheet = $('sheet');
+
+  sheet.innerHTML =
+    `<div class="sheetHead"><div>` +
+    (
+      serial
+        ? `<span class="serial">${serial}</span>`
+        : ''
+    ) +
+    `<h2>${esc(title)}</h2>` +
+    `<p>${esc(subtitle)}</p>` +
+    `</div>` +
+    `<button class="icon" aria-label="বন্ধ">×</button>` +
+    `</div>`;
+
+  sheet.querySelector('button').onclick = () => {
+    if (shownShop) back();
+    else closeSheet();
+  };
+
+  sheet.hidden = false;
+  return sheet;
+}
+
+function button(text, className, action) {
+  const element = document.createElement('button');
+  element.className = 'btn ' + className;
+  element.textContent = text;
+  element.onclick = action;
+  return element;
+}
+
+function googleLink(position) {
+  const link = document.createElement('a');
+  link.className = 'btn';
+  link.textContent = 'Google Maps';
+
+  link.href =
+    'https://www.google.com/maps/dir/?api=1&destination=' +
+    encodeURIComponent(position.lat + ',' + position.lng) +
+    '&travelmode=driving&dir_action=navigate';
+
+  link.target = '_blank';
+  link.rel = 'noopener';
+
+  return link;
+}
+
+function pointSheet() {
+  if (!selected) return;
+
+  shownShop = null;
+
+  const sheet = sheetHead(
+    selectedName,
+    selected.lat.toFixed(6) + ', ' + selected.lng.toFixed(6)
+  );
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  const add = button('+ দোকান', 'primary', openShopForm);
+  add.dataset.write = '';
+
+  actions.append(
+    add,
+    button('Destination', '', () => {
+      startNav({
+        lat: selected.lat,
+        lng: selected.lng,
+        name: selectedName
+      });
+    }),
+    googleLink(selected)
+  );
+
+  sheet.append(actions);
+  status();
+
+  if (!inside(selected, sr())) {
+    add.disabled = true;
+  }
+
+  remember();
 }
 
 function viewShop(key, recenter = true) {
@@ -1255,17 +1343,12 @@ function viewShop(key, recenter = true) {
     );
   }
 
-  const sheet = $('sheet');
-
-  sheet.innerHTML =
-    '<div class="sheetHead"><div>' +
-    `<span class="serial">সাইট #${Number(shop.globalSerial)}` +
-    ` · SR #${Number(shop.srSerial)}</span>` +
-    `<h2>${esc(shop.name)}</h2>` +
-    `<p>${esc(shop.owner)}</p>` +
-    '</div>' +
-    '<button id="closeSheet" class="icon" aria-label="বন্ধ">×</button>' +
-    '</div>';
+  const sheet = sheetHead(
+    shop.name,
+    shop.owner,
+    `সাইট #${Number(shop.globalSerial)} · ` +
+    `SR #${Number(shop.srSerial)}`
+  );
 
   if (shop.photo?.startsWith('data:image/')) {
     const image = document.createElement('img');
@@ -1281,34 +1364,14 @@ function viewShop(key, recenter = true) {
   const actions = document.createElement('div');
   actions.className = 'actions';
 
-  const destination = document.createElement('button');
-  destination.className = 'btn primary';
-  destination.textContent = 'Destination';
-  destination.onclick = () => directions(shop);
-
-  const google = document.createElement('a');
-  google.className = 'btn';
-  google.textContent = 'Google Maps';
-  google.href =
-    'https://www.google.com/maps/dir/?api=1&destination=' +
-    encodeURIComponent(shop.lat + ',' + shop.lng) +
-    '&travelmode=driving&dir_action=navigate';
-  google.target = '_blank';
-  google.rel = 'noopener';
-
   const call = document.createElement('a');
   call.className = 'btn';
   call.textContent = 'Call';
   call.href = 'tel:' + shop.phone.replace(/[^+\d]/g, '');
 
-  const remove = document.createElement('button');
-  remove.className = 'btn danger';
-  remove.textContent = 'মুছুন';
-  remove.dataset.write = '';
-
   const srId = current;
 
-  remove.onclick = async () => {
+  const remove = button('মুছুন', 'danger', async () => {
     if (!confirm('দোকানটি মুছবেন?')) return;
 
     try {
@@ -1318,101 +1381,319 @@ function viewShop(key, recenter = true) {
         }
       });
 
-      shownShop = null;
-      sheet.hidden = true;
-      clearRoute();
+      if (navigation?.shopId === key) {
+        stopNav();
+      }
+
+      visit('map', srId, null, false);
     } catch (error) {
-      toast(errorText(error));
+      toast(err(error));
     }
-  };
+  });
 
-  actions.append(destination, google, call, remove);
+  remove.dataset.write = '';
+
+  actions.append(
+    button('Destination', 'primary', () => {
+      startNav({
+        lat: shop.lat,
+        lng: shop.lng,
+        name: shop.name,
+        shopId: key
+      });
+    }),
+    googleLink(shop),
+    call,
+    remove
+  );
+
   sheet.append(actions);
-  sheet.hidden = false;
-
-  $('closeSheet').onclick = () => {
-    sheet.hidden = true;
-    shownShop = null;
-  };
-
-  syncStatus();
+  status();
 }
 
-async function directions(shop) {
-  if (!myPos) {
-    gps(true);
-    toast('লোকেশন পাওয়া গেলে আবার চাপুন।');
+function remember() {
+  if (!ready || !storeKey()) return;
+
+  const center = map.getCenter();
+
+  writeStore(storeKey(), {
+    view: drawing ? 'draw' : mode,
+    id: current,
+    shop: shownShop,
+    center: [center.lat, center.lng],
+    zoom: map.getZoom(),
+    bearing: map.getBearing?.() || 0,
+    selected: selected
+      ? [selected.lat, selected.lng]
+      : null,
+    selectedName,
+    navigation,
+    follow,
+    headingUp,
+    draft: drawing
+      ? {
+          points,
+          name: pendingName,
+          edit: editingArea
+        }
+      : null
+  });
+}
+
+map.on('moveend zoomend', () => {
+  if (mode === 'map' && !drawing) {
+    renderMap();
+  }
+
+  remember();
+});
+
+map.on('dragstart', () => {
+  follow = false;
+  headingUp = false;
+  updateFollow();
+});
+
+function urlFor(view, key, shop) {
+  const params = new URLSearchParams();
+
+  if (key) params.set('id', key);
+  if (shop) params.set('shop', shop);
+
+  return '#' + view + (params.size ? '?' + params : '');
+}
+
+function locationRoute() {
+  const [view, query = ''] =
+    location.hash.slice(1).split('?');
+
+  const params = new URLSearchParams(query);
+
+  return {
+    view: ['home', 'map', 'list', 'draw'].includes(view)
+      ? view
+      : 'home',
+    id: params.get('id'),
+    shop: params.get('shop')
+  };
+}
+
+function visit(
+  view,
+  key = current,
+  shop = null,
+  push = true
+) {
+  if (busy || preparing) return;
+
+  closeDialogs();
+
+  if (drawing) endArea();
+
+  if (view !== 'home' && !state.srs[key]) {
+    view = 'home';
+  }
+
+  if (view !== 'map' || key !== current) {
+    stopNav();
+    stopGPS();
+    clearPin();
+  }
+
+  current = view === 'home' ? null : key;
+  shownShop = null;
+  closeSheet();
+
+  $('placeResults').hidden = true;
+  cancelSearch();
+
+  const url = urlFor(view, current, shop);
+
+  if (push && location.hash !== url) {
+    history.pushState({atlas: true}, '', url);
+  } else if (!push) {
+    history.replaceState({atlas: true}, '', url);
+  }
+
+  show(view);
+
+  if (view === 'map') {
+    renderMap();
+
+    requestAnimationFrame(() => {
+      map.invalidateSize();
+
+      if (shop) viewShop(shop);
+      else fit();
+    });
+
+    gps();
+  }
+
+  if (view === 'list') renderList();
+  if (view === 'home') renderCards();
+
+  remember();
+}
+
+function back() {
+  if (busy || preparing) return;
+
+  if (document.querySelector('dialog[open]')) {
+    history.back();
     return;
   }
 
-  clearRoute();
+  if (
+    mode === 'map' ||
+    mode === 'list' ||
+    drawing
+  ) {
+    history.back();
+    return;
+  }
 
-  const controller = new AbortController();
-  routeController = controller;
-  const timer = setTimeout(() => controller.abort(), 15000);
+  visit('home', null, null, false);
+}
+
+function closeDialogs() {
+  document.querySelectorAll('dialog[open]').forEach(dialog => {
+    dialog.close();
+  });
+}
+
+function modal(id) {
+  history.pushState(
+    {atlas: true, modal: id},
+    '',
+    location.href
+  );
+
+  $(id).showModal();
+}
+
+function dismiss() {
+  history.back();
+}
+
+window.addEventListener('popstate', () => {
+  if (!ready) return;
+
+  if (busy || preparing) {
+    history.pushState(
+      {atlas: true},
+      '',
+      urlFor(drawing ? 'draw' : mode, current, shownShop)
+    );
+    return;
+  }
+
+  const atBase = history.state?.atlasBase;
+  closeDialogs();
+
+  const route = locationRoute();
+
+  if (route.view === 'draw') {
+    if (!drawing) {
+      visit('home', null, null, false);
+    }
+    return;
+  }
+
+  visit(route.view, route.id, route.shop, false);
+
+  if (atBase) {
+    history.pushState(
+      {atlas: true},
+      '',
+      urlFor('home', null, null)
+    );
+  }
+});
+
+function initHistory(saved) {
+  const route = locationRoute();
+
+  const target = location.hash
+    ? route
+    : saved || {view: 'home'};
+
+  history.replaceState(
+    {atlasBase: true},
+    '',
+    urlFor('home', null, null)
+  );
+
+  history.pushState(
+    {atlas: true},
+    '',
+    urlFor(target.view || 'home', target.id, target.shop)
+  );
+
+  return target;
+}
+
+async function mutate(change) {
+  if (
+    !auth.currentUser ||
+    !ready ||
+    !allowed ||
+    !connected
+  ) {
+    throw Error('সংযোগ ও অ্যাকাউন্টের অনুমতি পরীক্ষা করুন।');
+  }
+
+  if (busy) {
+    throw Error('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
+  }
+
+  busy = true;
+  status();
 
   try {
-    const response = await fetch(
-      'https://router.project-osrm.org/route/v1/driving/' +
-      `${myPos[1]},${myPos[0]};${shop.lng},${shop.lat}` +
-      '?overview=full&geometries=geojson',
-      {signal: controller.signal}
+    const result = await runTransaction(
+      atlas,
+      data => {
+        data ||= {srs: {}, nextGlobal: 1};
+        data.srs ||= {};
+
+        data.nextGlobal = Math.max(
+          1,
+          Number(data.nextGlobal) || 1
+        );
+
+        change(data);
+        return data;
+      },
+      {applyLocally: false}
     );
 
-    const result = await response.json();
-
-    if (
-      !response.ok ||
-      result.code !== 'Ok' ||
-      !result.routes?.length
-    ) throw Error('No route');
-
-    if (
-      routeController !== controller ||
-      mode !== 'map' ||
-      drawing
-    ) return;
-
-    const path = result.routes[0];
-
-    route = L.polyline(
-      path.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
-      {weight: 6, color: '#237cf4'}
-    ).addTo(map);
-
-    $('sheet').hidden = true;
-    shownShop = null;
-
-    map.fitBounds(route.getBounds(), {
-      paddingTopLeft: [45, 100],
-      paddingBottomRight: [45, 100]
-    });
-
-    toast(
-      (path.distance / 1000).toFixed(1) +
-      ' কিমি · ' +
-      Math.round(path.duration / 60) +
-      ' মিনিট'
-    );
-  } catch {
-    if (routeController === controller) {
-      toast('Google Maps ব্যবহার করুন।');
+    if (!result.committed) {
+      throw Error('সংরক্ষণ হয়নি।');
     }
+
+    state = result.snapshot.val() ||
+      {srs: {}, nextGlobal: 1};
+
+    renderAll();
+    toast('সংরক্ষণ হয়েছে ✓');
   } finally {
-    clearTimeout(timer);
+    busy = false;
+    status();
   }
 }
 
 function renderAll() {
   renderCards();
 
-  if (current && !sr() && !drawing) {
-    stopGPS();
-    clearRoute();
-    show('home');
-    current = null;
-    shownShop = null;
-    $('sheet').hidden = true;
+  if (
+    current &&
+    !sr() &&
+    !drawing &&
+    mode !== 'home'
+  ) {
+    visit('home', null, null, false);
+    return;
   }
 
   if (mode === 'list') renderList();
@@ -1424,17 +1705,599 @@ function renderAll() {
       if (sr()?.shops?.[shownShop]) {
         viewShop(shownShop, false);
       } else {
-        $('sheet').hidden = true;
         shownShop = null;
-        clearRoute();
+        closeSheet();
+
+        if (navigation?.shopId) {
+          stopNav();
+        }
       }
+    }
+  }
+
+  status();
+}
+
+function stopGPS() {
+  if (watch !== null) {
+    navigator.geolocation?.clearWatch(watch);
+  }
+
+  watch = null;
+  myPos = null;
+  previousPosition = null;
+
+  if (myMarker) map.removeLayer(myMarker);
+  if (accuracy) map.removeLayer(accuracy);
+
+  myMarker = null;
+  accuracy = null;
+}
+
+function direction(a, b) {
+  const radians = Math.PI / 180;
+  const lat1 = a[0] * radians;
+  const lat2 = b[0] * radians;
+  const delta = (b[1] - a[1]) * radians;
+
+  return (
+    Math.atan2(
+      Math.sin(delta) * Math.cos(lat2),
+      Math.cos(lat1) * Math.sin(lat2) -
+      Math.sin(lat1) * Math.cos(lat2) * Math.cos(delta)
+    ) / radians + 360
+  ) % 360;
+}
+
+function updateFollow() {
+  $('locate').classList.toggle('active', follow);
+  $('follow').classList.toggle('primary', follow);
+}
+
+function gps() {
+  if (watch !== null) return;
+
+  if (!navigator.geolocation || !isSecureContext) {
+    toast('লোকেশনের জন্য HTTPS প্রয়োজন।');
+    return;
+  }
+
+  watch = navigator.geolocation.watchPosition(
+    position => {
+      if (mode !== 'map' || drawing) return;
+
+      const next = [
+        position.coords.latitude,
+        position.coords.longitude
+      ];
+
+      if (
+        Number.isFinite(position.coords.heading) &&
+        position.coords.speed > .5
+      ) {
+        heading = position.coords.heading;
+      } else if (
+        previousPosition &&
+        position.coords.accuracy < 80 &&
+        map.distance(previousPosition, next) > 8
+      ) {
+        heading = direction(previousPosition, next);
+      }
+
+      if (
+        !previousPosition ||
+        map.distance(previousPosition, next) > 8
+      ) {
+        previousPosition = next;
+      }
+
+      myPos = next;
+
+      if (myMarker) {
+        myMarker.setLatLng(next);
+
+        accuracy
+          .setLatLng(next)
+          .setRadius(Math.min(position.coords.accuracy, 2000));
+      } else {
+        accuracy = L.circle(next, {
+          radius: Math.min(position.coords.accuracy, 2000),
+          weight: 0,
+          fillColor: '#2684ff',
+          fillOpacity: .1,
+          interactive: false
+        }).addTo(map);
+
+        myMarker = L.marker(next, {
+          icon: L.divIcon({
+            className: 'blueDot',
+            html: '<span></span>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          }),
+          zIndexOffset: 1500
+        }).addTo(map).bindTooltip('আপনার লোকেশন');
+      }
+
+      if (follow) {
+        if (headingUp) bearing(-heading);
+        map.panTo(next, {animate: false});
+      }
+
+      if (navigation) {
+        updateProgress();
+
+        const moved = lastRouteOrigin
+          ? map.distance(lastRouteOrigin, next)
+          : Infinity;
+
+        if (
+          !routePath.length ||
+          Date.now() - lastRouteAt > 30000 && moved > 20 ||
+          offRoute() > 60 && Date.now() - lastRouteAt > 15000
+        ) {
+          requestRoute();
+        }
+      }
+
+      remember();
+    },
+    error => {
+      stopGPS();
+
+      toast(
+        error.code === 1
+          ? 'লোকেশন অনুমতি দিন।'
+          : 'লোকেশন পাওয়া যায়নি।'
+      );
+
+      if (navigation) {
+        $('navInfo').textContent = 'লোকেশনের অপেক্ষায়…';
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 2000,
+      timeout: 20000
+    }
+  );
+}
+
+function stopNav() {
+  navigation = null;
+  follow = false;
+  headingUp = false;
+
+  routeEpoch++;
+  routeController?.abort();
+  routeController = null;
+
+  if (routeLine) map.removeLayer(routeLine);
+  if (routeHalo) map.removeLayer(routeHalo);
+
+  routeLine = null;
+  routeHalo = null;
+  routePath = [];
+  routeLengths = [];
+  routeProgress = 0;
+  lastRouteOrigin = null;
+  lastRouteAt = 0;
+
+  $('navBar').hidden = true;
+  $('bottom').hidden = drawing;
+
+  updateFollow();
+  remember();
+}
+
+function startNav(destination) {
+  stopNav();
+
+  navigation = {
+    ...destination,
+    srId: current
+  };
+
+  follow = true;
+  headingUp = true;
+
+  closeSheet();
+
+  $('bottom').hidden = true;
+  $('navBar').hidden = false;
+  $('navInfo').textContent = 'রুট লোড হচ্ছে…';
+  $('navName').textContent = destination.name;
+
+  map.setZoom(Math.max(17, map.getZoom()));
+
+  updateFollow();
+  gps();
+  requestRoute();
+  remember();
+}
+
+function nearestPath() {
+  if (!myPos || routePath.length < 2) return null;
+
+  const position = map.options.crs.project(L.latLng(myPos));
+  let best = null;
+
+  for (let i = 0; i < routePath.length - 1; i++) {
+    const a = map.options.crs.project(L.latLng(routePath[i]));
+    const b = map.options.crs.project(L.latLng(routePath[i + 1]));
+
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+
+    const t = Math.max(
+      0,
+      Math.min(
+        1,
+        (
+          (position.x - a.x) * dx +
+          (position.y - a.y) * dy
+        ) / (dx * dx + dy * dy || 1)
+      )
+    );
+
+    const point = map.options.crs.unproject(
+      L.point(a.x + t * dx, a.y + t * dy)
+    );
+
+    const distance = map.distance(myPos, point);
+
+    const along =
+      routeLengths[i] +
+      t * (routeLengths[i + 1] - routeLengths[i]);
+
+    if (along < routeProgress - 60) continue;
+
+    if (!best || distance < best.dist) {
+      best = {
+        dist: distance,
+        along,
+        index: i,
+        point: [point.lat, point.lng]
+      };
+    }
+  }
+
+  return best;
+}
+
+function offRoute() {
+  return nearestPath()?.dist || 0;
+}
+
+function updateProgress() {
+  if (!navigation || !myPos) return;
+
+  const nearest = nearestPath();
+
+  if (nearest && nearest.dist < 80) {
+    routeProgress = Math.max(routeProgress, nearest.along);
+
+    const path = [
+      nearest.point,
+      ...routePath.slice(nearest.index + 1)
+    ];
+
+    routeLine?.setLatLngs(path);
+    routeHalo?.setLatLngs(path);
+
+    const left = Math.max(0, routeTotal - routeProgress);
+
+    const minutes = Math.max(
+      1,
+      Math.round(
+        routeDuration * (left / (routeTotal || 1)) / 60
+      )
+    );
+
+    $('navInfo').textContent =
+      (
+        left < 1000
+          ? Math.round(left) + ' মিটার'
+          : (left / 1000).toFixed(1) + ' কিমি'
+      ) +
+      ' · প্রায় ' + minutes + ' মিনিট';
+  }
+
+  if (
+    map.distance(
+      myPos,
+      [navigation.lat, navigation.lng]
+    ) < 25
+  ) {
+    $('navInfo').textContent = 'গন্তব্যের কাছে পৌঁছেছেন';
+  }
+}
+
+async function requestRoute() {
+  if (
+    !navigation ||
+    !myPos ||
+    routeController ||
+    Date.now() - lastRouteAt < 15000
+  ) return;
+
+  lastRouteAt = Date.now();
+
+  const destination = {...navigation};
+  const origin = [...myPos];
+  const epoch = routeEpoch;
+  const controller = new AbortController();
+
+  routeController = controller;
+
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, 15000);
+
+  try {
+    const response = await fetch(
+      `https://router.project-osrm.org/route/v1/driving/` +
+      `${origin[1]},${origin[0]};` +
+      `${destination.lng},${destination.lat}` +
+      `?overview=full&geometries=geojson&steps=true`,
+      {signal: controller.signal}
+    );
+
+    const data = await response.json();
+
+    if (
+      !response.ok ||
+      data.code !== 'Ok' ||
+      !data.routes?.length
+    ) throw Error();
+
+    if (
+      epoch !== routeEpoch ||
+      !navigation ||
+      mode !== 'map'
+    ) return;
+
+    const result = data.routes[0];
+
+    routePath = result.geometry.coordinates.map(
+      ([lng, lat]) => [lat, lng]
+    );
+
+    routeLengths = [0];
+
+    for (let i = 1; i < routePath.length; i++) {
+      routeLengths.push(
+        routeLengths[i - 1] +
+        map.distance(routePath[i - 1], routePath[i])
+      );
+    }
+
+    routeTotal = routeLengths.at(-1);
+    routeDuration = result.duration;
+    routeProgress = 0;
+    lastRouteOrigin = origin;
+
+    if (routeLine) map.removeLayer(routeLine);
+    if (routeHalo) map.removeLayer(routeHalo);
+
+    routeHalo = L.polyline(routePath, {
+      weight: 10,
+      color: 'white',
+      opacity: .9,
+      interactive: false
+    }).addTo(map);
+
+    routeLine = L.polyline(routePath, {
+      weight: 6,
+      color: '#287df5',
+      interactive: false
+    }).addTo(map);
+
+    updateProgress();
+  } catch {
+    if (epoch === routeEpoch && navigation) {
+      $('navInfo').textContent = 'রুট পাওয়া যায়নি';
+      toast('Google Maps দিয়ে নেভিগেশন খুলতে পারেন।');
+    }
+  } finally {
+    clearTimeout(timer);
+
+    if (routeController === controller) {
+      routeController = null;
     }
   }
 }
 
+$('follow').onclick = () => {
+  follow = true;
+  headingUp = true;
+
+  gps();
+
+  if (myPos) {
+    map.setView(myPos, Math.max(17, map.getZoom()));
+    bearing(-heading);
+  }
+
+  updateFollow();
+  remember();
+};
+
+$('routeOverview').onclick = () => {
+  follow = false;
+  headingUp = false;
+  bearing(0);
+
+  if (routePath.length) {
+    map.fitBounds(routePath, {
+      paddingTopLeft: [45, 115],
+      paddingBottomRight: [65, 160],
+      maxZoom: 18
+    });
+  }
+
+  updateFollow();
+  remember();
+};
+
+$('stopNav').onclick = stopNav;
+
+$('locate').onclick = () => {
+  follow = true;
+  headingUp = !!navigation;
+
+  gps();
+
+  if (myPos) {
+    map.setView(myPos, Math.max(17, map.getZoom()));
+  } else {
+    toast('লোকেশন লোড হচ্ছে…');
+  }
+
+  updateFollow();
+  remember();
+};
+
+$('compass').onclick = () => {
+  headingUp = false;
+  bearing(((map.getBearing?.() || 0) + 45) % 360);
+  remember();
+};
+
+$('compass').ondblclick = () => {
+  headingUp = false;
+  bearing(0);
+};
+
+$('fit').onclick = () => {
+  follow = false;
+  headingUp = false;
+  bearing(0);
+  fit();
+  updateFollow();
+};
+
+function cancelSearch() {
+  searchEpoch++;
+  searchController?.abort();
+  searchController = null;
+  $('placeSubmit').disabled = false;
+}
+
+$('clearSearch').onclick = () => {
+  cancelSearch();
+  $('placeQuery').value = '';
+  $('placeResults').hidden = true;
+};
+
+$('placeForm').onsubmit = async event => {
+  event.preventDefault();
+
+  const query = $('placeQuery').value.trim();
+
+  if (!query || drawing) return;
+  if (Date.now() - searchAt < 1100) return;
+
+  cancelSearch();
+
+  const epoch = searchEpoch;
+  searchAt = Date.now();
+  $('placeSubmit').disabled = true;
+
+  const cacheKey = 'atlas-place-' + query.toLowerCase();
+  const cached = readStore(cacheKey);
+
+  try {
+    let results = cached;
+
+    if (!results) {
+      const controller = new AbortController();
+      searchController = controller;
+
+      const timer = setTimeout(() => {
+        controller.abort();
+      }, 12000);
+
+      try {
+        const bounds = map.getBounds();
+
+        const params = new URLSearchParams({
+          q: query,
+          format: 'jsonv2',
+          limit: '6',
+          'accept-language': 'bn,en',
+          viewbox: [
+            bounds.getWest(),
+            bounds.getNorth(),
+            bounds.getEast(),
+            bounds.getSouth()
+          ].join(',')
+        });
+
+        const response = await fetch(
+          'https://nominatim.openstreetmap.org/search?' + params,
+          {signal: controller.signal}
+        );
+
+        if (!response.ok) throw Error();
+
+        results = await response.json();
+        if (!Array.isArray(results)) throw Error();
+
+        writeStore(cacheKey, results);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    if (epoch !== searchEpoch || mode !== 'map') return;
+
+    const root = $('placeResults');
+    root.replaceChildren();
+    root.hidden = false;
+
+    if (!results.length) {
+      root.innerHTML =
+        '<div class="result">' +
+        'পাওয়া যায়নি। অন্য নামে চেষ্টা করুন।' +
+        '</div>';
+      return;
+    }
+
+    results.forEach(item => {
+      const result = button(item.display_name, '', () => {
+        root.hidden = true;
+        follow = false;
+        headingUp = false;
+        updateFollow();
+
+        putPin(
+          [Number(item.lat), Number(item.lon)],
+          item.display_name
+        );
+
+        map.setView(selected, 17);
+        pointSheet();
+      });
+
+      result.className = 'result';
+      root.append(result);
+    });
+  } catch {
+    if (epoch === searchEpoch) {
+      toast('সার্চ পাওয়া যায়নি। আবার চেষ্টা করুন।');
+    }
+  } finally {
+    if (epoch === searchEpoch) {
+      $('placeSubmit').disabled = false;
+      searchController = null;
+    }
+  }
+};
+
 function setZoom(on) {
   zooming = on;
-  addingCorner = false;
+  adding = false;
 
   $('zoomToggle').textContent =
     'জুম / সরান: ' + (on ? 'চালু' : 'বন্ধ');
@@ -1446,6 +2309,7 @@ function setZoom(on) {
   [
     'dragging',
     'touchZoom',
+    'touchRotate',
     'doubleClickZoom',
     'scrollWheelZoom',
     'boxZoom',
@@ -1462,11 +2326,10 @@ function setZoom(on) {
 function renderDrawing() {
   drawLayer.clearLayers();
   handles = [];
-  areaPoly = null;
 
   if (!points.length) return;
 
-  areaPoly = L.polyline(
+  outline = L.polyline(
     points.length > 2 ? [...points, points[0]] : points,
     {
       color: '#f16b38',
@@ -1482,27 +2345,32 @@ function renderDrawing() {
       bubblingMouseEvents: false,
       icon: L.divIcon({
         className:
-          'vertex' + (index === selectedCorner ? ' active' : ''),
+          'vertex' + (index === chosen ? ' active' : ''),
         iconSize: [25, 25],
         iconAnchor: [12, 12]
       })
     }).addTo(drawLayer);
 
     handle.on('drag', () => {
-      const location = handle.getLatLng();
+      const position = handle.getLatLng();
 
-      points[index] = [location.lat, location.lng];
+      points[index] = [position.lat, position.lng];
 
-      areaPoly.setLatLngs(
-        points.length > 2 ? [...points, points[0]] : points
+      outline.setLatLngs(
+        points.length > 2
+          ? [...points, points[0]]
+          : points
       );
     });
 
-    handle.on('dragend', renderDrawing);
+    handle.on('dragend', () => {
+      renderDrawing();
+      remember();
+    });
 
     handle.on('click', () => {
       if (zooming) return;
-      selectedCorner = index;
+      chosen = index;
       renderDrawing();
     });
 
@@ -1510,34 +2378,52 @@ function renderDrawing() {
   });
 }
 
-function startArea(name, existing = null) {
+function startArea(name, item = null, draft = null) {
+  stopNav();
   stopGPS();
-  clearRoute();
+  clearPin();
+  closeSheet();
+  cancelSearch();
+
+  $('placeResults').hidden = true;
 
   drawing = true;
-  editingArea = existing
-    ? {id: existing.id, polygon: clone(ring(existing))}
-    : null;
-
   pendingName = name;
-  points = existing ? clone(ring(existing)) : [];
-  selectedCorner = -1;
-  selected = null;
-  shownShop = null;
 
-  map.closePopup();
+  editingArea = draft?.edit || (
+    item
+      ? {
+          id: item.id,
+          polygon: copy(ring(item))
+        }
+      : null
+  );
+
+  points = draft?.points ||
+    (item ? copy(ring(item)) : []);
+
+  chosen = -1;
+  adding = false;
+
   mapLayer.clearLayers();
 
-  $('sheet').hidden = true;
   $('bottom').hidden = true;
+  $('navBar').hidden = true;
   $('menu').hidden = true;
   $('locate').hidden = true;
+  $('placeForm').hidden = true;
   $('drawbar').hidden = false;
-
   $('mapTitle').textContent = name;
-  $('mapSub').textContent = '';
 
   show('map');
+
+  history.pushState(
+    {atlas: true},
+    '',
+    urlFor('draw', current)
+  );
+
+  bearing(0);
   renderDrawing();
   setZoom(false);
 
@@ -1545,25 +2431,29 @@ function startArea(name, existing = null) {
     map.invalidateSize();
     fit();
   });
+
+  remember();
 }
 
 function endArea() {
   drawing = false;
   editingArea = null;
   points = [];
-  selectedCorner = -1;
-  addingCorner = false;
+  chosen = -1;
+  adding = false;
 
   drawLayer.clearLayers();
 
   $('bottom').hidden = false;
   $('menu').hidden = false;
   $('locate').hidden = false;
+  $('placeForm').hidden = false;
   $('drawbar').hidden = true;
 
   [
     'dragging',
     'touchZoom',
+    'touchRotate',
     'doubleClickZoom',
     'scrollWheelZoom',
     'boxZoom',
@@ -1576,8 +2466,8 @@ $('zoomToggle').onclick = () => setZoom(!zooming);
 $('addCorner').onclick = () => {
   if (zooming || busy) return;
 
-  addingCorner = true;
-  selectedCorner = -1;
+  adding = true;
+  chosen = -1;
   renderDrawing();
 
   toast('ম্যাপে কোণার জায়গায় ট্যাপ করুন।');
@@ -1586,25 +2476,29 @@ $('addCorner').onclick = () => {
 $('removeCorner').onclick = () => {
   if (zooming || busy) return;
 
-  if (selectedCorner < 0) {
+  if (chosen < 0) {
     toast('একটি কোণা নির্বাচন করুন।');
     return;
   }
 
-  points.splice(selectedCorner, 1);
-  selectedCorner = -1;
+  points.splice(chosen, 1);
+  chosen = -1;
+
   renderDrawing();
+  remember();
 };
 
+$('cancelArea').onclick = back;
+
 $('saveArea').onclick = async () => {
-  if (!validRing(points) || selfCross(points)) {
+  if (!validPolygon(points)) {
     toast('অন্তত ৩টি কোণা দিয়ে সঠিক সীমানা তৈরি করুন।');
     return;
   }
 
-  const polygon = clone(points);
+  const polygon = copy(points);
   const edit = editingArea;
-  const key = edit?.id || id();
+  const key = edit?.id || uid();
   const name = pendingName;
   const createdAt = Date.now();
 
@@ -1613,7 +2507,9 @@ $('saveArea').onclick = async () => {
       if (edit) {
         const item = data.srs[key];
 
-        if (!item) throw Error('SR পাওয়া যায়নি।');
+        if (!item) {
+          throw Error('SR পাওয়া যায়নি।');
+        }
 
         if (
           JSON.stringify(ring(item)) !==
@@ -1636,56 +2532,34 @@ $('saveArea').onclick = async () => {
     });
 
     endArea();
-    openMap(key);
+    visit('map', key, null, false);
   } catch (error) {
-    toast(errorText(error));
-  }
-};
-
-$('cancelArea').onclick = () => {
-  if (busy) return;
-
-  const key = editingArea?.id;
-  endArea();
-
-  if (key && state.srs[key]) {
-    openMap(key);
-  } else {
-    show('home');
-    renderCards();
+    toast(err(error));
   }
 };
 
 map.on('click', event => {
   if (drawing) {
-    if (!zooming && addingCorner && !busy) {
-      points.push([event.latlng.lat, event.latlng.lng]);
-      addingCorner = false;
-      selectedCorner = points.length - 1;
+    if (!zooming && adding && !busy) {
+      points.push([
+        event.latlng.lat,
+        event.latlng.lng
+      ]);
+
+      adding = false;
+      chosen = points.length - 1;
+
       renderDrawing();
+      remember();
     }
+
     return;
   }
 
   if (mode !== 'map' || !sr()) return;
 
-  selected = event.latlng;
-
-  if (!inside(selected, sr())) {
-    selected = null;
-    toast('SR এলাকার ভেতরে ট্যাপ করুন।');
-    return;
-  }
-
-  const button = document.createElement('button');
-  button.className = 'btn primary';
-  button.textContent = '+ দোকান';
-  button.onclick = openShopForm;
-
-  L.popup()
-    .setLatLng(selected)
-    .setContent(button)
-    .openOn(map);
+  putPin(event.latlng);
+  pointSheet();
 });
 
 function openShopForm() {
@@ -1694,23 +2568,22 @@ function openShopForm() {
     myPos &&
     inside({lat: myPos[0], lng: myPos[1]}, sr())
   ) {
-    selected = L.latLng(myPos);
+    putPin(myPos);
   }
 
   if (!selected || !inside(selected, sr())) {
-    toast('ম্যাপে দোকানের জায়গায় ট্যাপ করুন।');
+    toast('SR এলাকার ভেতরে দোকানের জায়গায় ট্যাপ করুন।');
     return;
   }
 
-  if (!ready || !connected || !allowed) {
+  if (!ready || !allowed || !connected) {
     toast('সংযোগ পরীক্ষা করুন।');
     return;
   }
 
-  map.closePopup();
   $('shopForm').reset();
   $('shopError').textContent = '';
-  $('shopDialog').showModal();
+  modal('shopDialog');
 }
 
 async function photoData(file) {
@@ -1744,8 +2617,11 @@ async function photoData(file) {
         );
 
         const context = canvas.getContext('2d');
+
         context.fillStyle = 'white';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillRect(
+          0, 0, canvas.width, canvas.height
+        );
 
         context.drawImage(
           image, 0, 0, canvas.width, canvas.height
@@ -1761,7 +2637,7 @@ async function photoData(file) {
 
     image.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(Error('JPG বা PNG ছবি ব্যবহার করুন।'));
+      reject(Error('JPG বা PNG ছবি দিন।'));
     };
 
     image.src = url;
@@ -1770,17 +2646,21 @@ async function photoData(file) {
 
 $('shopForm').onsubmit = async event => {
   event.preventDefault();
-  if (preparingShop || busy) return;
+
+  if (preparing || busy) return;
 
   const srId = current;
+
   const position = selected
-    ? {lat: selected.lat, lng: selected.lng}
+    ? {
+        lat: selected.lat,
+        lng: selected.lng
+      }
     : null;
 
   const name = $('shopName').value.trim();
   const owner = $('owner').value.trim();
   const phone = $('phone').value.trim();
-  const file = $('photo').files[0];
 
   if (!name || !owner || !phone) {
     $('shopError').textContent = 'সব ঘর পূরণ করুন।';
@@ -1789,12 +2669,12 @@ $('shopForm').onsubmit = async event => {
 
   if (!position) return;
 
-  preparingShop = true;
-  syncStatus();
+  preparing = true;
+  status();
 
   try {
-    const photo = await photoData(file);
-    const key = id();
+    const photo = await photoData($('photo').files[0]);
+    const key = uid();
 
     await mutate(data => {
       const item = data.srs[srId];
@@ -1804,7 +2684,11 @@ $('shopForm').onsubmit = async event => {
       }
 
       item.shops ||= {};
-      item.nextLocal = Math.max(1, Number(item.nextLocal) || 1);
+
+      item.nextLocal = Math.max(
+        1,
+        Number(item.nextLocal) || 1
+      );
 
       item.shops[key] = {
         id: key,
@@ -1818,21 +2702,69 @@ $('shopForm').onsubmit = async event => {
       };
     });
 
-    $('shopDialog').close();
+    preparing = false;
+    closeDialogs();
+
+    history.replaceState(
+      {atlas: true},
+      '',
+      urlFor('map', srId, key)
+    );
+
     viewShop(key);
+    remember();
   } catch (error) {
-    $('shopError').textContent = errorText(error);
+    $('shopError').textContent = err(error);
   } finally {
-    preparingShop = false;
-    syncStatus();
+    preparing = false;
+    status();
   }
 };
+
+function openEdit() {
+  $('editTitle').textContent = sr()?.name || '';
+  modal('editDialog');
+}
 
 $('newSR').onclick = () => {
   editingName = null;
   $('nameTitle').textContent = 'নতুন SR';
   $('nameForm').reset();
+  modal('nameDialog');
+};
+
+$('menu').onclick = openEdit;
+
+$('renameSR').onclick = () => {
+  if (!sr()) return;
+
+  editingName = current;
+  closeDialogs();
+
+  history.replaceState(
+    {atlas: true, modal: 'nameDialog'},
+    '',
+    location.href
+  );
+
+  $('nameTitle').textContent = 'নাম পরিবর্তন';
+  $('srName').value = sr().name;
   $('nameDialog').showModal();
+};
+
+$('editDistance').onclick = () => {
+  if (!sr()) return;
+
+  const item = sr();
+  closeDialogs();
+
+  history.replaceState(
+    {atlas: true},
+    '',
+    urlFor(mode === 'map' ? 'map' : 'home', current)
+  );
+
+  startArea(item.name, item);
 };
 
 $('nameForm').onsubmit = async event => {
@@ -1841,89 +2773,71 @@ $('nameForm').onsubmit = async event => {
   const name = $('srName').value.trim();
   if (!name) return;
 
-  const key = editingName;
+  if (!editingName) {
+    closeDialogs();
 
-  if (!key) {
-    $('nameDialog').close();
+    history.replaceState(
+      {atlas: true},
+      '',
+      urlFor('home', null)
+    );
+
+    current = null;
     startArea(name);
     return;
   }
 
+  const key = editingName;
+
   try {
     await mutate(data => {
-      if (!data.srs[key]) throw Error('SR পাওয়া যায়নি।');
+      if (!data.srs[key]) {
+        throw Error('SR পাওয়া যায়নি।');
+      }
+
       data.srs[key].name = name;
     });
 
-    $('nameDialog').close();
     editingName = null;
+    dismiss();
   } catch (error) {
-    toast(errorText(error));
+    toast(err(error));
   }
 };
 
-$('menu').onclick = () => {
-  if (!sr()) return;
-  $('editTitle').textContent = sr().name;
-  $('editDialog').showModal();
-};
-
-$('renameSR').onclick = () => {
-  if (!sr()) return;
-  editingName = current;
-  $('editDialog').close();
-  $('nameTitle').textContent = 'নাম পরিবর্তন';
-  $('srName').value = sr().name;
-  $('nameDialog').showModal();
-};
-
-$('editDistance').onclick = () => {
-  if (!sr()) return;
-  $('editDialog').close();
-  startArea(sr().name, sr());
-};
-
-$('locate').onclick = () => gps(true);
-$('fit').onclick = fit;
 $('addShop').onclick = openShopForm;
-$('shopListBtn').onclick = () => openList(current);
-$('listMap').onclick = () => openMap(current);
-$('listBack').onclick = () => show('home');
-
-$('mapBack').onclick = () => {
-  if (busy || preparingShop) return;
-
-  if (drawing) endArea();
-
-  stopGPS();
-  clearRoute();
-  map.closePopup();
-
-  selected = null;
-  shownShop = null;
-  $('sheet').hidden = true;
-
-  show('home');
-  renderCards();
-};
-
-$('srSearch').oninput = renderCards;
+$('shopListBtn').onclick = () => visit('list', current);
+$('listMap').onclick = () => visit('map', current);
+$('listBack').onclick = back;
+$('mapBack').onclick = back;
 $('shopSearch').oninput = renderList;
 
-$('account').onclick = async () => {
-  if (busy || preparingShop) return;
+document.querySelectorAll('[data-close]').forEach(button => {
+  button.onclick = () => {
+    if (!busy && !preparing) dismiss();
+  };
+});
 
-  try {
-    await signOut(auth);
-  } catch (error) {
-    toast(errorText(error));
-  }
-};
+document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+
+    if (!busy && !preparing) dismiss();
+  });
+});
 
 let loginPending = false;
+let persistenceError = null;
+
+try {
+  await setPersistence(auth, browserLocalPersistence);
+} catch (error) {
+  persistenceError = error;
+}
 
 $('loginForm').onsubmit = async event => {
   event.preventDefault();
+
   if (loginPending) return;
 
   loginPending = true;
@@ -1931,6 +2845,8 @@ $('loginForm').onsubmit = async event => {
   $('loginError').textContent = '';
 
   try {
+    await setPersistence(auth, browserLocalPersistence);
+
     await signInWithEmailAndPassword(
       auth,
       $('email').value.trim(),
@@ -1939,7 +2855,7 @@ $('loginForm').onsubmit = async event => {
 
     $('password').value = '';
   } catch (error) {
-    $('loginError').textContent = errorText(error);
+    $('loginError').textContent = err(error);
   } finally {
     loginPending = false;
 
@@ -1949,156 +2865,205 @@ $('loginForm').onsubmit = async event => {
   }
 };
 
-document.querySelectorAll('[data-close]').forEach(button => {
-  button.onclick = () => {
-    if (busy || preparingShop) return;
-    $(button.dataset.close).close();
-  };
-});
-
-document.querySelectorAll('dialog').forEach(dialog => {
-  dialog.addEventListener('cancel', event => {
-    if (busy || preparingShop) event.preventDefault();
-  });
-});
-
 onValue(ref(db, '.info/connected'), snapshot => {
   connected = snapshot.val() === true;
-  syncStatus();
+  status();
 });
 
-function resetPage() {
-  stopGPS();
-  clearRoute();
-
-  if (drawing) endArea();
-
-  current = null;
-  selected = null;
-  shownShop = null;
-
-  $('sheet').hidden = true;
-
-  mapLayer.clearLayers();
-  drawLayer.clearLayers();
-  map.closePopup();
-
-  document.querySelectorAll('dialog').forEach(dialog => {
-    if (dialog.open) dialog.close();
-  });
-
-  show('login');
-}
-
-onAuthStateChanged(auth, user => {
-  unsubscribe?.();
-  memberUnsubscribe?.();
-
-  unsubscribe = null;
-  memberUnsubscribe = null;
-
+function failLogin(message) {
   ready = false;
   allowed = false;
   state = {srs: {}, nextGlobal: 1};
 
-  resetPage();
+  closeDialogs();
+  stopNav();
+  stopGPS();
+  clearPin();
+  cancelSearch();
+
+  if (drawing) endArea();
+
+  mapLayer.clearLayers();
+  drawLayer.clearLayers();
+
+  $('sheet').hidden = true;
+  current = null;
+
+  show('login');
+
+  $('loginError').textContent = message;
+  $('loginSubmit').disabled = false;
+
   renderCards();
-  syncStatus();
+  status();
+}
+
+onAuthStateChanged(auth, user => {
+  const epoch = ++authEpoch;
+
+  dataOff?.();
+  memberOff?.();
+
+  dataOff = null;
+  memberOff = null;
+  ready = false;
+  allowed = false;
+  restored = false;
+  sessionUser = user?.uid || null;
+
+  status();
 
   if (!user) {
-    $('loginSubmit').disabled = false;
-    $('loginError').textContent = '';
+    failLogin(
+      persistenceError
+        ? 'ব্রাউজারের storage চালু করে আবার লগইন করুন।'
+        : ''
+    );
     return;
   }
 
-  $('loginSubmit').disabled = true;
-  $('loginError').textContent = '';
+  show('loading');
 
-  memberUnsubscribe = onValue(
+  memberOff = onValue(
     ref(db, 'atlasMembers/' + user.uid),
     snapshot => {
-      allowed = snapshot.val() === true;
-      unsubscribe?.();
-      unsubscribe = null;
-      ready = false;
+      if (epoch !== authEpoch) return;
 
-      if (!allowed) {
-        state = {srs: {}, nextGlobal: 1};
-
-        resetPage();
-        renderCards();
-        syncStatus();
-
-        $('loginError').textContent =
-          'এই অ্যাকাউন্টের অনুমতি নেই।';
-
-        $('loginSubmit').disabled = false;
+      if (snapshot.val() !== true) {
+        dataOff?.();
+        dataOff = null;
+        failLogin('এই অ্যাকাউন্টের অনুমতি নেই।');
         return;
       }
 
-      unsubscribe = onValue(
+      allowed = true;
+
+      if (dataOff) return;
+
+      dataOff = onValue(
         atlas,
         databaseSnapshot => {
+          if (epoch !== authEpoch || !allowed) return;
+
           state = databaseSnapshot.val() ||
             {srs: {}, nextGlobal: 1};
 
           state.srs ||= {};
           ready = true;
 
-          if (mode === 'login') show('home');
+          if (!restored || mode === 'login') {
+            restored = true;
+
+            const saved = readStore(storeKey());
+            const target = initHistory(saved);
+
+            if (
+              target.view === 'draw' &&
+              saved?.draft
+            ) {
+              current = saved.id;
+
+              startArea(
+                saved.draft.name,
+                null,
+                saved.draft
+              );
+            } else {
+              visit(
+                target.view,
+                target.id,
+                target.shop,
+                false
+              );
+
+              if (
+                target.view === 'map' &&
+                saved?.id === current
+              ) {
+                requestAnimationFrame(() => {
+                  if (saved.center) {
+                    map.setView(
+                      saved.center,
+                      saved.zoom || 17
+                    );
+                  }
+
+                  bearing(saved.bearing || 0);
+
+                  if (saved.selected && !shownShop) {
+                    putPin(
+                      saved.selected,
+                      saved.selectedName
+                    );
+
+                    pointSheet();
+                  }
+
+                  if (
+                    saved.navigation?.srId === current
+                  ) {
+                    startNav(saved.navigation);
+
+                    follow = saved.follow !== false;
+                    headingUp = saved.headingUp !== false;
+
+                    updateFollow();
+                  }
+                });
+              }
+            }
+          }
 
           renderAll();
-          syncStatus();
+          status();
         },
         error => {
-          ready = false;
-          state = {srs: {}, nextGlobal: 1};
-
-          resetPage();
-          renderCards();
-          syncStatus();
-
-          $('loginError').textContent = errorText(error);
-          $('loginSubmit').disabled = false;
+          if (epoch === authEpoch) {
+            failLogin(err(error));
+          }
         }
       );
-
-      syncStatus();
     },
     error => {
-      allowed = false;
-      ready = false;
-      state = {srs: {}, nextGlobal: 1};
-
-      resetPage();
-      renderCards();
-      syncStatus();
-
-      $('loginError').textContent = errorText(error);
-      $('loginSubmit').disabled = false;
+      if (epoch === authEpoch) {
+        failLogin(err(error));
+      }
     }
   );
 });
 
-renderCards();
-syncStatus();
+window.addEventListener('pagehide', remember);
+
+document.addEventListener('visibilitychange', () => {
+  if (
+    document.visibilityState === 'visible' &&
+    navigation
+  ) {
+    gps();
+    requestRoute();
+  }
+});
+
+status();
 </script>
 
 <script>
 window.addEventListener('error', event => {
   if (
-    event.message &&
-    /L is not defined|Failed to fetch|Script error/.test(event.message)
+    /L is not defined|Failed to fetch|Script error/.test(
+      event.message || ''
+    )
   ) {
-    const message = document.getElementById('loginError');
+    document.querySelectorAll('.view').forEach(view => {
+      view.classList.remove('on');
+    });
 
-    if (message) {
-      message.textContent =
-        'লোড হয়নি। ইন্টারনেট পরীক্ষা করে রিফ্রেশ করুন।';
-    }
+    document.getElementById('loginView').classList.add('on');
+
+    document.getElementById('loginError').textContent =
+      'লোড হয়নি। ইন্টারনেট পরীক্ষা করে রিফ্রেশ করুন।';
   }
 });
 </script>
-
 </body>
 </html>
