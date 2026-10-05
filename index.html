@@ -3,109 +3,455 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#142850">
-<title>SR Atlas — দোকান ম্যাপ</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta name="theme-color" content="#102e38">
+<title>SR Atlas — Live shop map</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
 <style>
-:root{font-family:system-ui,'Noto Sans Bengali',sans-serif;color:#152c4b;background:#f1f6fb}
+:root{
+  font-family:system-ui,'Noto Sans Bengali',sans-serif;
+  color:#15333e;
+  background:#f3f7f6;
+  --green:#087f72;
+  --ink:#102e38;
+}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0}
 button,input{font:inherit}
-button{cursor:pointer;border:0}
-button:disabled{opacity:.45;cursor:default}
-.btn{border-radius:12px;padding:11px 14px;font-weight:750;background:#e8f0ff;color:#194e8c}
-.blue{background:#246af3;color:white}
-.pink{background:#fff0f4;color:#bb345e}
-.icon{width:44px;height:44px;border-radius:14px;background:white;color:#174785;font-size:22px;box-shadow:0 4px 18px #14285030}
+button,a.btn{cursor:pointer;border:0}
+button:disabled{opacity:.45;cursor:wait}
+.btn{
+  padding:12px 16px;
+  border-radius:13px;
+  background:#e9f3f1;
+  color:#146456;
+  font-weight:750;
+  text-decoration:none;
+  text-align:center;
+}
+.primary{background:var(--green);color:#fff}
+.danger{background:#fff0f1;color:#b5384a}
+.icon{
+  height:45px;
+  min-width:45px;
+  border-radius:14px;
+  background:white;
+  font-size:22px;
+  box-shadow:0 4px 20px #12353c20;
+}
 .view{display:none}
 .view.on{display:block}
-.hero{background:linear-gradient(130deg,#142850,#246af3 75%,#26bad1);padding:20px 18px 34px;color:white}
-.heroInner{max-width:1080px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.hero h1{font-size:23px;margin:0}
-.hero .btn{background:white;color:#205acf}
-.home{max-width:1080px;margin:-18px auto 0;padding:0 16px 30px;position:relative}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.card{padding:18px;border-radius:18px;background:white;box-shadow:0 8px 26px #143c7a19;border:1px solid #e2ebf7}
-.cardTitle{border:0;background:none;font-weight:800;font-size:21px;color:#142850;text-align:left;padding:0;width:100%}
-.card small{display:block;color:#6b7e95;margin:10px 0 16px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+header{
+  background:
+    radial-gradient(circle at 90% 0,#247a71,transparent 50%),
+    var(--ink);
+  color:white;
+  padding:28px 20px 52px;
+}
+.wrap{max-width:1100px;margin:auto}
+.head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.brand{letter-spacing:-1px;margin:0;font-size:29px}
+.eyebrow{
+  font-size:11px;
+  letter-spacing:3px;
+  color:#9cdbd0;
+  margin-bottom:8px;
+}
+.subtitle{color:#c0dbd7;margin:7px 0 18px}
+.headActions{display:flex;gap:8px;flex-wrap:wrap}
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:13px;
+}
+.status:before{
+  content:'';
+  width:8px;
+  height:8px;
+  background:#f5bc68;
+  border-radius:50%;
+}
+.status.good:before{background:#4be0ac}
+.home{
+  max-width:1100px;
+  margin:-26px auto 0;
+  padding:0 18px 28px;
+  position:relative;
+}
+.stats{
+  display:flex;
+  gap:12px;
+  background:white;
+  border-radius:18px;
+  padding:18px 24px;
+  box-shadow:0 8px 25px #123b3a0c;
+  margin-bottom:22px;
+}
+.stats div{flex:1}
+.stats strong{display:block;font-size:25px}
+.stats small{color:#698079}
+.search{
+  width:100%;
+  border:1px solid #d8e5e0;
+  background:white;
+  border-radius:14px;
+  padding:13px 15px;
+  margin-bottom:18px;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+}
+.card{
+  background:white;
+  border:1px solid #dfebe6;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 8px 26px #17403508;
+}
+.badge{
+  color:var(--green);
+  background:#e5f4ee;
+  border-radius:10px;
+  padding:8px;
+  display:inline-block;
+  font-size:18px;
+}
+.card h2{margin:12px 0 5px;font-size:22px}
+.card small{color:#718780}
+.row{display:flex;gap:8px;margin-top:18px}
 .row>*{flex:1}
-.empty{padding:20px;color:#61768b;background:white;border-radius:15px}
+.empty{
+  background:white;
+  padding:28px;
+  border-radius:18px;
+  color:#617b73;
+  text-align:center;
+  grid-column:1/-1;
+}
 .mapView{height:100dvh;position:relative;overflow:hidden}
-#map{width:100%;height:100%}
-.toolbar{position:absolute;z-index:800;top:12px;left:12px;right:12px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+#map{height:100%;width:100%;background:#e8f1eb}
+.toolbar{
+  position:absolute;
+  z-index:800;
+  top:max(12px,env(safe-area-inset-top));
+  left:12px;
+  right:12px;
+  display:flex;
+  gap:8px;
+  pointer-events:none;
+  align-items:start;
+}
 .toolbar>*{pointer-events:auto}
-.title{background:white;box-shadow:0 4px 18px #14285030;border-radius:14px;padding:11px 13px;min-height:44px;font-weight:800;flex:1;max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mapTitle{
+  background:white;
+  box-shadow:0 4px 20px #12353c20;
+  padding:10px 14px;
+  border-radius:14px;
+  max-width:350px;
+  min-width:0;
+}
+.mapTitle strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mapTitle small{font-size:11px;color:#647e75}
 .tools{margin-left:auto;display:grid;gap:8px}
-.bottom{position:absolute;z-index:800;bottom:18px;left:12px;right:12px;display:flex;gap:8px;max-width:550px}
-.bottom .btn{box-shadow:0 3px 14px #122c6240}
-.toast{position:absolute;z-index:860;top:70px;left:50%;transform:translateX(-50%);border-radius:12px;background:#142850;color:white;padding:9px 13px;text-align:center;max-width:85%;box-shadow:0 4px 16px #132e5555}
-.toast:empty{display:none}
-.drawbar{position:absolute;z-index:810;bottom:18px;left:10px;right:10px;background:white;border-radius:16px;padding:9px;box-shadow:0 5px 22px #122c6260;display:none;flex-wrap:wrap;gap:6px;max-width:660px;margin:auto}
-.drawbar.on{display:flex}
-.drawbar .btn{flex:1;min-width:90px}
-.drawbar .selected{background:#246af3;color:white}
-.listPage{max-width:900px;margin:auto;padding:15px}
-.listTop{display:flex;align-items:center;gap:10px}
-.listTop h2{flex:1}
-.shopRow{display:flex;gap:12px;align-items:center;background:white;padding:12px;border-radius:15px;margin:10px 0;box-shadow:0 3px 18px #143c7a12}
-.shopRow img{width:68px;height:68px;object-fit:cover;border-radius:11px}
+.bottom{
+  position:absolute;
+  z-index:800;
+  left:12px;
+  right:12px;
+  bottom:32px;
+  display:flex;
+  gap:8px;
+  max-width:550px;
+}
+.bottom>*{flex:1;box-shadow:0 3px 15px #12353c22}
+.drawbar{
+  position:absolute;
+  z-index:820;
+  left:12px;
+  right:12px;
+  bottom:32px;
+  background:white;
+  border-radius:18px;
+  padding:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  max-width:650px;
+  margin:auto;
+  box-shadow:0 4px 25px #12353c33;
+}
+.drawbar button{flex:1;font-size:13px}
+.drawbar .selected{background:#153e48;color:white}
+.sheet{
+  position:absolute;
+  z-index:850;
+  bottom:0;
+  left:0;
+  right:0;
+  border-radius:23px 23px 0 0;
+  background:white;
+  padding:22px 20px max(25px,env(safe-area-inset-bottom));
+  max-height:72dvh;
+  overflow:auto;
+  box-shadow:0 -5px 35px #122f3b30;
+}
+.sheetHead{display:flex;gap:10px;align-items:start}
+.sheetHead div{flex:1}
+.sheet h2{margin:7px 0}
+.sheet p{color:#637d76;margin:5px 0}
+.sheet img{
+  width:100%;
+  max-height:220px;
+  object-fit:cover;
+  border-radius:14px;
+  margin:12px 0;
+}
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+.serial{color:#087f72;font-weight:800;font-size:12px}
+.list{max-width:900px;padding:20px;margin:auto}
+.listTop{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.listTop h2{flex:1;margin:0}
+.shopRow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  margin:10px 0;
+  background:white;
+  border-radius:16px;
+  border:1px solid #e0eae5;
+}
+.shopRow img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:12px;
+}
+.shopRow .info{flex:1;min-width:0}
 .shopRow strong{display:block}
-.shopRow small{display:block;color:#5c7188;margin:5px 0}
-.numbers{font-size:12px;color:#2866d6;font-weight:800}
-.shopRow .btn{margin-left:auto}
-.sheet{position:absolute;z-index:830;bottom:0;left:0;right:0;background:white;border-radius:23px 23px 0 0;padding:16px 18px max(20px,env(safe-area-inset-bottom));box-shadow:0 -8px 30px #152b4d44;max-height:70dvh;overflow:auto}
-.sheet[hidden]{display:none}
-.sheetHero{display:flex;gap:14px;align-items:flex-start}
-.sheetHero h2{margin:3px 0;font-size:21px}
-.sheetHero p{margin:5px 0;color:#64788d}
-.sheetHero button{margin-left:auto}
-.sheet img{width:100%;max-height:230px;object-fit:cover;border-radius:14px;margin:12px 0}
-.sheetActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:16px}
-.sheetActions a{text-decoration:none;text-align:center}
-.labelIcon{background:none;border:0}
-.shopLabel{background:#fff;border:2px solid #246af3;border-radius:9px;padding:4px 8px;max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;font-size:13px;box-shadow:0 3px 10px #0003}
-.modal{border:0;border-radius:18px;width:min(450px,calc(100vw - 24px));padding:23px;box-shadow:0 20px 65px #11254e66}
-.modal::backdrop{background:#102240a8}
-.modal h2{margin:0 0 13px}
-.modal label{display:block;font-weight:700;margin:13px 0 5px}
-.modal input{width:100%;padding:11px;border:1px solid #bfd0e6;border-radius:10px}
-.modal footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-.modal p{color:#65788c}
-.vertex{background:#fff;border:4px solid #f46530;border-radius:50%;box-shadow:0 2px 8px #0005}
-.vertex.active{background:#f46530;border-color:#fff}
-.leaflet-popup-content button{background:#246af3;color:white;border-radius:9px;padding:8px 12px}
-.leaflet-control-attribution{font-size:11px}
+.shopRow small{
+  display:block;
+  color:#6e827b;
+  margin:5px 0;
+  overflow-wrap:anywhere;
+}
+.modal{
+  border:0;
+  border-radius:22px;
+  width:min(480px,calc(100vw - 24px));
+  max-height:88dvh;
+  padding:24px;
+  color:var(--ink);
+  box-shadow:0 20px 60px #102e3850;
+}
+.modal::backdrop{background:#102e387d;backdrop-filter:blur(3px)}
+.modal h2{margin:0 0 14px}
+.modal label{display:block;font-weight:750;margin:13px 0 6px}
+.modal input{
+  width:100%;
+  border:1px solid #cdded5;
+  border-radius:11px;
+  padding:12px;
+}
+.modal footer{
+  display:flex;
+  justify-content:end;
+  gap:8px;
+  margin-top:22px;
+}
+.modal p,.modal li{line-height:1.7;color:#536c63}
+.modal pre{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:12px;
+  background:#eef5f1;
+  padding:15px;
+  border-radius:12px;
+  text-align:left;
+  direction:ltr;
+}
+.modal details{margin:15px 0}
+.modal summary{cursor:pointer;font-weight:750}
+.stack{display:grid;gap:9px}
+.error{color:#b22c46!important;min-height:22px;font-size:13px}
+.toast{
+  position:fixed;
+  z-index:4000;
+  top:85px;
+  left:50%;
+  transform:translateX(-50%);
+  max-width:90%;
+  border-radius:14px;
+  padding:11px 16px;
+  background:#123843;
+  color:white;
+  box-shadow:0 5px 22px #12353c30;
+  font-size:14px;
+  text-align:center;
+}
+.toast:empty{display:none}
+.pin{background:none;border:0}
+.pin span{
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  background:#087f72;
+  color:white;
+  border:3px solid white;
+  border-radius:50% 50% 50% 6px;
+  transform:rotate(-45deg);
+  box-shadow:0 3px 10px #153e4844;
+}
+.pin b{transform:rotate(45deg);font-size:12px}
+.leaflet-tooltip.shopLabel{
+  border:1px solid #c4ded3;
+  border-radius:8px;
+  font-weight:750;
+  box-shadow:0 3px 10px #122e3820;
+}
+.vertex{
+  border:3px solid white;
+  background:#f16b38;
+  border-radius:50%;
+  box-shadow:0 3px 12px #12353c50;
+}
+.vertex.active{background:#163d49;border:3px solid #ffbb82}
+.leaflet-control-zoom{
+  margin-top:100px!important;
+  border:0!important;
+  box-shadow:0 4px 20px #12353c20!important;
+}
+.leaflet-bar a{border-radius:8px!important}
+.leaflet-control-attribution{font-size:10px}
+.hint{
+  background:#eaf5ef;
+  border-radius:12px;
+  padding:12px;
+  color:#356251;
+  font-size:13px;
+  line-height:1.6;
+}
+.user{
+  max-width:240px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  color:#c0dbd7;
+  margin-top:9px;
+}
 @media(max-width:600px){
-  .title{max-width:calc(100vw - 165px)}
-  .leaflet-control-zoom{margin-top:70px!important}
-  .hero h1{font-size:19px}
-  .bottom{bottom:14px}
+  header{padding:22px 18px 48px}
+  .head{align-items:start}
+  .brand{font-size:25px}
+  .headActions{max-width:175px;justify-content:end}
+  .headActions .btn{padding:9px 12px;font-size:12px}
+  .mapTitle{max-width:calc(100vw - 136px)}
+  .bottom .btn{font-size:13px;padding:12px 8px}
+  .stats{padding:15px 19px}
+  .stats strong{font-size:23px}
+  .shopRow{gap:8px}
+  .shopRow .btn{padding:10px}
+  .drawbar button{min-width:90px}
+  .modal{padding:20px}
 }
 </style>
 </head>
+
 <body>
 
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
 <section id="homeView" class="view on">
-  <div class="hero">
-    <div class="heroInner">
-      <h1>SR Atlas</h1>
-      <button id="newSR" class="btn">+ SR add</button>
+  <header>
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="eyebrow">YOUR TERRITORY. CONNECTED.</div>
+          <h1 class="brand">
+            SR Atlas <span style="color:#64d5b7">↗</span>
+          </h1>
+          <p class="subtitle">দোকান, সীমানা ও আপনার পথ — এক ম্যাপে</p>
+        </div>
+
+        <div class="headActions">
+          <button id="help" class="btn">সেটআপ</button>
+          <button id="account" class="btn">লগইন</button>
+          <button id="newSR" class="btn primary" data-write>
+            + SR add
+          </button>
+        </div>
+      </div>
+
+      <span id="status" class="status">লগইন করুন</span>
+      <div id="user" class="user"></div>
     </div>
-  </div>
+  </header>
+
   <main class="home">
+    <div class="stats">
+      <div>
+        <strong id="srCount">0</strong>
+        <small>SR এলাকা</small>
+      </div>
+      <div>
+        <strong id="shopCount">0</strong>
+        <small>মোট দোকান</small>
+      </div>
+      <div>
+        <strong style="font-size:19px">LIVE</strong>
+        <small>Firebase sync</small>
+      </div>
+    </div>
+
+    <input
+      id="srSearch"
+      class="search"
+      placeholder="SR-এর নাম খুঁজুন…"
+      aria-label="SR খুঁজুন"
+    >
     <div id="cards" class="cards"></div>
   </main>
 </section>
 
 <section id="listView" class="view">
-  <main class="listPage">
+  <main class="list">
     <div class="listTop">
       <button id="listBack" class="icon" aria-label="ফিরুন">‹</button>
       <h2 id="listTitle"></h2>
-      <button id="listMap" class="btn blue">ম্যাপ</button>
+      <button id="listMap" class="btn primary">ম্যাপ</button>
     </div>
+
+    <input
+      id="shopSearch"
+      class="search"
+      placeholder="দোকান, মালিক বা মোবাইল খুঁজুন…"
+      aria-label="দোকান খুঁজুন"
+    >
     <div id="shopList"></div>
   </main>
 </section>
@@ -115,72 +461,97 @@ button:disabled{opacity:.45;cursor:default}
 
   <div class="toolbar">
     <button id="mapBack" class="icon" aria-label="ফিরুন">‹</button>
-    <div id="mapTitle" class="title"></div>
+
+    <div class="mapTitle">
+      <strong id="mapTitle"></strong>
+      <small id="mapSub">রাস্তা ও জায়গার নাম দেখতে জুম করুন</small>
+    </div>
+
     <div class="tools">
       <button id="locate" class="icon" aria-label="আমার লোকেশন">◎</button>
-      <button id="menu" class="icon" aria-label="সম্পাদনা">⋮</button>
+      <button id="fit" class="icon" aria-label="সম্পূর্ণ এলাকা">⛶</button>
+      <button id="menu" class="icon" aria-label="SR সম্পাদনা">⋮</button>
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
-
-  <div id="drawbar" class="drawbar">
-    <button id="zoomToggle" class="btn">🔎 জুম / সরান: বন্ধ</button>
-    <button id="addCorner" class="btn">+ কোণা</button>
-    <button id="removeCorner" class="btn pink">কোণা মুছুন</button>
-    <button id="saveArea" class="btn blue">সীমানা সংরক্ষণ</button>
+  <div id="bottom" class="bottom">
+    <button id="addShop" class="btn primary" data-write>+ দোকান</button>
+    <button id="shopListBtn" class="btn">দোকান লিস্ট</button>
   </div>
 
-  <div id="bottom" class="bottom">
-    <button id="addShop" class="btn blue">+ দোকান</button>
-    <button id="shopListBtn" class="btn">দোকান লিস্ট</button>
+  <div id="drawbar" class="drawbar" hidden>
+    <button id="zoomToggle" class="btn">জুম / সরান: বন্ধ</button>
+    <button id="addCorner" class="btn">+ কোণা</button>
+    <button id="removeCorner" class="btn danger">কোণা মুছুন</button>
+    <button id="cancelArea" class="btn">বাতিল</button>
+    <button id="saveArea" class="btn primary" data-write>সংরক্ষণ</button>
   </div>
 
   <div id="sheet" class="sheet" hidden></div>
 </section>
 
-<dialog id="srChoices" class="modal">
-  <h2 id="choiceTitle"></h2>
-  <div style="display:grid;gap:8px">
-    <button id="choiceMap" class="btn blue">Open Location</button>
-    <button id="choiceList" class="btn">Shop List</button>
-    <button id="choiceEdit" class="btn">SR সম্পাদনা</button>
-  </div>
-  <footer>
-    <button class="btn" data-close="srChoices">বন্ধ</button>
-  </footer>
-</dialog>
+<dialog id="loginDialog" class="modal">
+  <form id="loginForm">
+    <h2>আপনার Atlas-এ প্রবেশ করুন</h2>
+    <p>Firebase-এ তৈরি করা Email/Password অ্যাকাউন্ট ব্যবহার করুন।</p>
 
-<dialog id="editChoices" class="modal">
-  <h2>SR সম্পাদনা</h2>
-  <div style="display:grid;gap:8px">
-    <button id="renameSR" class="btn">নাম পরিবর্তন</button>
-    <button id="editDistance" class="btn blue">
-      Map Distance — সীমানা বাড়ান / কমান
-    </button>
-  </div>
-  <footer>
-    <button class="btn" data-close="editChoices">বন্ধ</button>
-  </footer>
+    <label for="email">ইমেইল</label>
+    <input id="email" type="email" required autocomplete="username">
+
+    <label for="password">পাসওয়ার্ড</label>
+    <input
+      id="password"
+      type="password"
+      required
+      autocomplete="current-password"
+    >
+
+    <p id="loginError" class="error" role="alert"></p>
+
+    <footer>
+      <button type="button" class="btn" data-close="loginDialog">বন্ধ</button>
+      <button id="loginSubmit" class="btn primary">লগইন</button>
+    </footer>
+  </form>
 </dialog>
 
 <dialog id="nameDialog" class="modal">
   <form id="nameForm">
-    <h2 id="nameTitle">SR যোগ করুন</h2>
+    <h2 id="nameTitle">নতুন SR</h2>
+
     <label for="srName">SR-এর নাম</label>
     <input id="srName" required maxlength="80">
+
     <footer>
       <button type="button" class="btn" data-close="nameDialog">
         বাতিল
       </button>
-      <button class="btn blue">পরবর্তী ধাপ</button>
+      <button class="btn primary" data-write>পরবর্তী ধাপ</button>
     </footer>
   </form>
+</dialog>
+
+<dialog id="editDialog" class="modal">
+  <h2 id="editTitle">SR সম্পাদনা</h2>
+
+  <div class="stack">
+    <button id="renameSR" class="btn" data-write>নাম পরিবর্তন</button>
+    <button id="editDistance" class="btn primary" data-write>
+      Map Distance — সীমানা বাড়ান / কমান
+    </button>
+  </div>
+
+  <footer>
+    <button class="btn" data-close="editDialog">বন্ধ</button>
+  </footer>
 </dialog>
 
 <dialog id="shopDialog" class="modal">
   <form id="shopForm">
     <h2>দোকান যোগ করুন</h2>
+
+    <p class="hint">ম্যাপে বেছে নেওয়া অবস্থানে দোকানটি সংরক্ষণ হবে।</p>
+
     <label for="shopName">দোকানের নাম</label>
     <input id="shopName" required maxlength="100">
 
@@ -190,1079 +561,1778 @@ button:disabled{opacity:.45;cursor:default}
     <label for="phone">মোবাইল নাম্বার</label>
     <input id="phone" type="tel" required maxlength="22">
 
-    <label for="photo">দোকানের ছবি</label>
+    <label for="photo">দোকানের ছবি (ঐচ্ছিক)</label>
     <input id="photo" type="file" accept="image/*">
+
+    <p id="shopError" class="error" role="alert"></p>
 
     <footer>
       <button type="button" class="btn" data-close="shopDialog">
         বাতিল
       </button>
-      <button class="btn blue">সংরক্ষণ</button>
+      <button class="btn primary" data-write>সংরক্ষণ</button>
     </footer>
   </form>
 </dialog>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-(() => {
-  'use strict';
+<dialog id="helpDialog" class="modal">
+  <h2>Firebase সেটআপ</h2>
 
-  const $ = id => document.getElementById(id);
-  const KEY = 'sr-atlas-v3';
-  let state = {srs: [], nextGlobal: 1};
+  <ol>
+    <li>
+      <a
+        href="https://console.firebase.google.com/project/rahad-map-ab322/authentication/providers"
+        target="_blank"
+        rel="noopener"
+      >Firebase Console → Authentication</a>-এ
+      Email/Password চালু করুন। Users → Add user দিয়ে আপনার ও টিমের
+      অ্যাকাউন্ট তৈরি করুন।
+    </li>
+
+    <li>
+      প্রতিটি ব্যবহারকারীর UID কপি করুন।
+      Realtime Database → Data-এ
+      <code>atlasMembers/USER_UID</code>
+      পাথে boolean <code>true</code> যোগ করুন।
+      USER_UID-এর জায়গায় আসল UID বসাবেন।
+      অ্যাপ নিজে কাউকে অনুমতি দিতে পারে না।
+    </li>
+
+    <li>
+      Realtime Database → Rules-এ নিচের নিয়ম অন্য বিদ্যমান নিয়মের
+      সঙ্গে মিলিয়ে বসিয়ে Publish করুন।
+      আগে থেকে root-level read/write true থাকলে সেটি বন্ধ করুন,
+      নইলে নিচের বিধিনিষেধ কার্যকর হবে না।
+    </li>
+  </ol>
+
+  <pre>{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "atlasMembers": {
+      "$uid": {
+        ".read": "auth != null &amp;&amp; auth.uid === $uid"
+      }
+    },
+    "srAtlas": {
+      ".read": "auth != null &amp;&amp; root.child('atlasMembers').child(auth.uid).val() === true",
+      ".write": "auth != null &amp;&amp; root.child('atlasMembers').child(auth.uid).val() === true"
+    }
+  }
+}</pre>
+
+  <p>
+    ৪. HTML-টি HTTPS হোস্টিংয়ে চালান।
+    Authentication → Settings → Authorized domains-এ
+    হোস্টিং ডোমেইন যোগ করুন।
+    লগইন করে SR ও দোকান যোগ করুন।
+    তথ্য <code>srAtlas</code>-এ থাকবে।
+    ছবি ছোট JPEG হিসেবে একই ডাটাবেইজে থাকবে;
+    আলাদা Storage সেটআপ লাগবে না।
+  </p>
+
+  <details>
+    <summary>পুরনো ফোনের তথ্য আনুন</summary>
+    <p>
+      আগের HTML যে browser ও একই website origin-এ চলেছিল
+      সেখানেই এই ফাইল চালিয়ে লগইন করুন।
+      পুরনো localStorage থেকে SR ও দোকান একবার আমদানি হবে।
+      নতুন সিরিয়াল দেওয়া হবে; পুরনো তথ্য মুছবে না।
+      ভিন্ন origin হলে পুরনো HTML থেকে আগে JSON export করতে হবে।
+    </p>
+
+    <button id="importOld" class="btn" data-write>
+      পুরনো তথ্য Firebase-এ আনুন
+    </button>
+  </details>
+
+  <details>
+    <summary>ম্যাপ সম্পর্কে</summary>
+    <p>
+      লেবেলসহ OpenStreetMap ব্যবহার করা হয়েছে।
+      রাস্তা ও ছোট জায়গার নাম দেখতে + দিয়ে জুম করুন।
+      SR-এর বাইরেও ম্যাপ পরিষ্কার থাকবে।
+      OSM-এ যে নাম নেই তা দেখানো সম্ভব নয়।
+      দোকানের Google Maps বাটন দিয়ে Google navigation খুলতে পারবেন।
+      প্রকৃত Google basemap চাইলে আলাদা Google Maps JavaScript API key
+      ও billing setup প্রয়োজন।
+    </p>
+    <p>
+      দোকান যোগ: ম্যাপের ভেতরে জায়গা ট্যাপ করুন, তারপর + দোকান।
+      নিজের বর্তমান জায়গায় যোগ করতে আগে ◎ চাপুন।
+      সীমানা: + কোণা → ম্যাপ ট্যাপ → কমলা বৃত্ত টেনে সরান।
+      জুম / সরান চালু করলে ম্যাপ নড়বে।
+    </p>
+  </details>
+
+  <p class="hint">
+    ইন্টারনেট বা অনুমতি না থাকলে সংরক্ষণ বন্ধ থাকবে।
+    সফল Firebase confirmation-এর পরেই “সংরক্ষণ হয়েছে” দেখাবে।
+    এই ফাইল আপনার Firebase Console-এর settings বা rules নিজে
+    পরিবর্তন করে না।
+  </p>
+
+  <footer>
+    <button class="btn primary" data-close="helpDialog">বুঝেছি</button>
+  </footer>
+</dialog>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script type="module">
+import {
+  initializeApp
+} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  runTransaction
+} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhlvysObnxXKg2HO3b0z0U8aBwQ6Xakos",
+  authDomain: "rahad-map-ab322.firebaseapp.com",
+  databaseURL: "https://rahad-map-ab322-default-rtdb.firebaseio.com",
+  projectId: "rahad-map-ab322",
+  storageBucket: "rahad-map-ab322.firebasestorage.app",
+  messagingSenderId: "111356994872",
+  appId: "1:111356994872:web:f583173bf0fcc301ef0dcd",
+  measurementId: "G-Q43YDPJJZF"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const atlas = ref(db, 'srAtlas');
+
+const $ = id => document.getElementById(id);
+const clone = value => JSON.parse(JSON.stringify(value));
+
+let state = {srs: {}, nextGlobal: 1};
+let current = null;
+let mode = 'home';
+let ready = false;
+let connected = false;
+let busy = false;
+let unsubscribe = null;
+let memberUnsubscribe = null;
+let allowed = false;
+
+let drawing = false;
+let editingArea = null;
+let editingName = null;
+let pendingName = '';
+let points = [];
+let selectedCorner = -1;
+let addingCorner = false;
+let zooming = false;
+let areaPoly = null;
+let handles = [];
+
+let selected = null;
+let shownShop = null;
+let watch = null;
+let myPos = null;
+let myMarker = null;
+let accuracy = null;
+let route = null;
+let routeController = null;
+let centerNext = false;
+let preparingShop = false;
+
+const sr = () => state.srs?.[current];
+const shops = item => Object.values(item?.shops || {});
+const srs = () => Object.values(state.srs || {});
+
+function id() {
+  return crypto.randomUUID?.() ||
+    Date.now() + '-' + Math.random().toString(36).slice(2);
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[c]);
+}
+
+function toast(message) {
+  $('toast').textContent = message;
+  clearTimeout(toast.timer);
+
+  if (message) {
+    toast.timer = setTimeout(() => {
+      $('toast').textContent = '';
+    }, 5500);
+  }
+}
+
+function errorText(error) {
+  const code = error?.code || '';
+  const message = error?.message || '';
+
+  if (/permission|PERMISSION/i.test(code + ' ' + message)) {
+    return 'অনুমতি নেই। সেটআপে দেখানো Database Rules ও atlasMembers UID ঠিক করুন।';
+  }
+
+  if (/invalid-credential|wrong-password|user-not-found/.test(code)) {
+    return 'ইমেইল বা পাসওয়ার্ড ঠিক নয়।';
+  }
+
+  if (/operation-not-allowed/.test(code)) {
+    return 'Firebase-এ Email/Password sign-in চালু করুন।';
+  }
+
+  if (/network/.test(code)) {
+    return 'ইন্টারনেট সংযোগ পাওয়া যাচ্ছে না।';
+  }
+
+  if (/too-many/.test(code)) {
+    return 'অনেকবার চেষ্টা হয়েছে। একটু পরে আবার চেষ্টা করুন।';
+  }
+
+  return message || 'কাজটি সম্পন্ন হয়নি। আবার চেষ্টা করুন।';
+}
+
+function syncStatus() {
+  const good = !!auth.currentUser && connected && ready && allowed;
+
+  $('status').textContent = busy
+    ? 'Firebase-এ সংরক্ষণ হচ্ছে…'
+    : !auth.currentUser
+      ? 'তথ্য দেখতে লগইন করুন'
+      : !connected
+        ? 'অফলাইন — সংরক্ষণ বন্ধ'
+        : !allowed
+          ? 'অ্যাকাউন্টের অনুমতি যাচাই হচ্ছে…'
+          : !ready
+            ? 'Firebase থেকে তথ্য লোড হচ্ছে…'
+            : 'Firebase connected · Live sync';
+
+  $('status').classList.toggle('good', good && !busy);
+
+  document.querySelectorAll('[data-write]').forEach(button => {
+    button.disabled = !good || busy;
+  });
+}
+
+function show(view) {
+  document.querySelectorAll('.view').forEach(element => {
+    element.classList.remove('on');
+  });
+
+  $(view + 'View').classList.add('on');
+  mode = view;
+
+  if (view === 'map') {
+    requestAnimationFrame(() => map.invalidateSize());
+  }
+}
+
+async function mutate(change) {
+  if (!auth.currentUser || !allowed || !ready || !connected) {
+    throw Error('লগইন, অনুমতি ও ইন্টারনেট সংযোগ পরীক্ষা করুন।');
+  }
+
+  if (busy) {
+    throw Error('আগের সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
+  }
+
+  busy = true;
+  syncStatus();
 
   try {
-    const saved = JSON.parse(localStorage.getItem(KEY));
-    if (Array.isArray(saved?.srs)) {
-      state = saved;
-    } else {
-      const old = JSON.parse(localStorage.getItem('sr-shop-map-v2'));
-      if (Array.isArray(old?.srs)) state.srs = old.srs;
+    const result = await runTransaction(
+      atlas,
+      data => {
+        const next = data || {srs: {}, nextGlobal: 1};
+        next.srs ||= {};
+        next.nextGlobal = Math.max(1, Number(next.nextGlobal) || 1);
+        change(next);
+        return next;
+      },
+      {applyLocally: false}
+    );
+
+    if (!result.committed) {
+      throw Error('সংরক্ষণ হয়নি।');
     }
-  } catch {}
 
-  state.nextGlobal = Math.max(1, Number(state.nextGlobal) || 1);
+    state = result.snapshot.val() || {srs: {}, nextGlobal: 1};
+    renderAll();
+    toast('Firebase-এ সংরক্ষণ হয়েছে ✓');
+  } finally {
+    busy = false;
+    syncStatus();
+  }
+}
 
-  for (const sr of state.srs) {
-    sr.shops = sr.shops || [];
-    sr.nextLocal = Math.max(1, Number(sr.nextLocal) || 1);
+// লেবেলসহ ম্যাপ। ম্যাপের ওপর গাঢ় আবরণ রাখা হয়নি।
+const map = L.map('map', {
+  zoomControl: true
+}).setView([23.8103, 90.4125], 13);
 
-    for (const shop of sr.shops) {
-      if (!Number.isInteger(shop.globalSerial)) {
-        shop.globalSerial = state.nextGlobal++;
-      } else {
-        state.nextGlobal = Math.max(
-          state.nextGlobal,
-          shop.globalSerial + 1
-        );
-      }
+const tiles = L.tileLayer(
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">' +
+      'OpenStreetMap</a> contributors'
+  }
+).addTo(map);
 
-      if (!Number.isInteger(shop.srSerial)) {
-        shop.srSerial = sr.nextLocal++;
-      } else {
-        sr.nextLocal = Math.max(
-          sr.nextLocal,
-          shop.srSerial + 1
-        );
-      }
-    }
+let tileErrors = 0;
+
+tiles.on('tileerror', () => {
+  if (++tileErrors === 3) {
+    toast('ম্যাপ লোড হচ্ছে না। ইন্টারনেট বা tile access পরীক্ষা করুন।');
+  }
+});
+
+tiles.on('tileload', () => tileErrors = 0);
+
+L.control.scale({
+  imperial: false,
+  position: 'bottomleft'
+}).addTo(map);
+
+const mapLayer = L.layerGroup().addTo(map);
+const drawLayer = L.layerGroup().addTo(map);
+
+function ring(item) {
+  if (Array.isArray(item?.polygon)) {
+    return item.polygon;
   }
 
-  function save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-      return true;
-    } catch {
-      alert('ছবিটি ছোট করুন অথবা ব্রাউজারের জায়গা খালি করুন। সংরক্ষণ হয়নি।');
-      return false;
-    }
-  }
-
-  function makeId() {
-    return crypto.randomUUID?.() ||
-      Date.now() + '-' + Math.random();
-  }
-
-  function escapeHTML(value) {
-    return String(value ?? '').replace(/[&<>"]/g, c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;'
-    })[c]);
-  }
-
-  let current = null;
-  let choice = null;
-  let editingName = null;
-  let editingArea = null;
-  let mode = 'home';
-  let zooming = false;
-  let addingCorner = false;
-  let selectedCorner = -1;
-  let points = [];
-  let handles = [];
-  let areaPoly = null;
-  let selected = null;
-  let watch = null;
-  let myPos = null;
-  let myMarker = null;
-  let route = null;
-  let focused = false;
-  let labelMarkers = [];
-  let pendingName = '';
-
-  const activeSR = () =>
-    state.srs.find(item => item.id === current);
-
-  function ring(sr) {
-    return sr.polygon || [
-      [sr.bounds.s, sr.bounds.w],
-      [sr.bounds.n, sr.bounds.w],
-      [sr.bounds.n, sr.bounds.e],
-      [sr.bounds.s, sr.bounds.e]
+  if (item?.bounds) {
+    return [
+      [item.bounds.s, item.bounds.w],
+      [item.bounds.n, item.bounds.w],
+      [item.bounds.n, item.bounds.e],
+      [item.bounds.s, item.bounds.e]
     ];
   }
 
-  function inside(point, sr) {
-    if (!sr) return false;
+  return [];
+}
 
-    const vertices = ring(sr);
-    let result = false;
+function validRing(vertices) {
+  if (!Array.isArray(vertices) || vertices.length < 3) {
+    return false;
+  }
 
-    for (
-      let i = 0, j = vertices.length - 1;
-      i < vertices.length;
-      j = i++
-    ) {
+  const validCoordinates = vertices.every(point =>
+    Array.isArray(point) &&
+    point.length === 2 &&
+    Number.isFinite(point[0]) &&
+    Math.abs(point[0]) <= 85 &&
+    Number.isFinite(point[1]) &&
+    Math.abs(point[1]) <= 180
+  );
+
+  if (!validCoordinates) return false;
+
+  const area = vertices.reduce((total, a, index) => {
+    const b = vertices[(index + 1) % vertices.length];
+    return total + a[1] * b[0] - b[1] * a[0];
+  }, 0);
+
+  return Math.abs(area) > 1e-12;
+}
+
+function selfCross(vertices) {
+  const cross = (a, b, c) =>
+    (b[1] - a[1]) * (c[0] - a[0]) -
+    (b[0] - a[0]) * (c[1] - a[1]);
+
+  const between = (a, b, c) =>
+    Math.min(a[0], b[0]) <= c[0] &&
+    c[0] <= Math.max(a[0], b[0]) &&
+    Math.min(a[1], b[1]) <= c[1] &&
+    c[1] <= Math.max(a[1], b[1]);
+
+  for (let i = 0; i < vertices.length; i++) {
+    for (let j = i + 1; j < vertices.length; j++) {
+      if (
+        j === i + 1 ||
+        (i === 0 && j === vertices.length - 1)
+      ) continue;
+
       const a = vertices[i];
-      const b = vertices[j];
+      const b = vertices[(i + 1) % vertices.length];
+      const c = vertices[j];
+      const d = vertices[(j + 1) % vertices.length];
+
+      const x = cross(a, b, c);
+      const y = cross(a, b, d);
+      const z = cross(c, d, a);
+      const w = cross(c, d, b);
 
       if (
-        (a[0] > point.lat) !==
-          (b[0] > point.lat) &&
-        point.lng <
-          (b[1] - a[1]) *
-          (point.lat - a[0]) /
-          (b[0] - a[0]) + a[1]
+        (x * y < 0 && z * w < 0) ||
+        (x === 0 && between(a, b, c)) ||
+        (y === 0 && between(a, b, d)) ||
+        (z === 0 && between(c, d, a)) ||
+        (w === 0 && between(c, d, b))
       ) {
-        result = !result;
+        return true;
       }
     }
-
-    return result;
   }
 
-  const map = L.map('map', {zoomControl: true})
-    .setView([23.8103, 90.4125], 12);
+  return false;
+}
 
-  L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
+function inside(point, item) {
+  const vertices = ring(item);
+  let result = false;
+
+  for (
+    let i = 0, j = vertices.length - 1;
+    i < vertices.length;
+    j = i++
+  ) {
+    const a = vertices[i];
+    const b = vertices[j];
+
+    const dx = b[1] - a[1];
+    const dy = b[0] - a[0];
+
+    const t = dx * dx + dy * dy
+      ? (
+          (point.lng - a[1]) * dx +
+          (point.lat - a[0]) * dy
+        ) / (dx * dx + dy * dy)
+      : 0;
+
+    if (
+      t >= 0 &&
+      t <= 1 &&
+      Math.hypot(
+        point.lng - (a[1] + t * dx),
+        point.lat - (a[0] + t * dy)
+      ) < 1e-9
+    ) {
+      return true;
     }
-  ).addTo(map);
 
-  const mapLayer = L.layerGroup().addTo(map);
-  const drawLayer = L.layerGroup().addTo(map);
+    if (
+      (a[0] > point.lat) !== (b[0] > point.lat) &&
+      point.lng <
+        (b[1] - a[1]) *
+        (point.lat - a[0]) /
+        (b[0] - a[0]) + a[1]
+    ) {
+      result = !result;
+    }
+  }
 
-  function show(name) {
-    document.querySelectorAll('.view').forEach(element => {
-      element.classList.remove('on');
+  return result;
+}
+
+function fit() {
+  const vertices = drawing ? points : ring(sr());
+
+  if (vertices.length) {
+    map.fitBounds(L.latLngBounds(vertices), {
+      paddingTopLeft: [45, 95],
+      paddingBottomRight: [45, 110],
+      maxZoom: 17
     });
-
-    $(name + 'View').classList.add('on');
-    mode = name;
-
-    if (name === 'map') {
-      setTimeout(() => map.invalidateSize(), 30);
-    }
   }
+}
 
-  function toast(message) {
-    $('toast').textContent = message;
-    clearTimeout(toast.timer);
+function renderCards() {
+  const items = srs();
+  const query = $('srSearch').value.trim().toLowerCase();
 
-    if (message) {
-      toast.timer = setTimeout(() => {
-        $('toast').textContent = '';
-      }, 4500);
-    }
-  }
+  $('srCount').textContent = items.length;
+  $('shopCount').textContent = items.reduce(
+    (total, item) => total + shops(item).length,
+    0
+  );
 
-  function renderCards() {
-    const root = $('cards');
-    root.replaceChildren();
+  $('cards').replaceChildren();
 
-    if (!state.srs.length) {
-      const empty = document.createElement('p');
-      empty.className = 'empty';
-      empty.textContent = 'SR add চাপুন';
-      root.append(empty);
-    }
-
-    state.srs.forEach(sr => {
-      const card = document.createElement('div');
+  items
+    .filter(item => item.name.toLowerCase().includes(query))
+    .forEach(item => {
+      const card = document.createElement('article');
       card.className = 'card';
 
-      const title = document.createElement('button');
-      title.className = 'cardTitle';
-      title.textContent = sr.name;
-      title.onclick = () => openChoices(sr.id);
+      card.innerHTML =
+        '<span class="badge">⌖</span>' +
+        `<h2>${esc(item.name)}</h2>` +
+        `<small>${shops(item).length}টি দোকান · নিজস্ব সীমানা</small>`;
 
-      const count = document.createElement('small');
-      count.textContent = sr.shops.length + 'টি দোকান';
-
-      const actions = document.createElement('div');
-      actions.className = 'row';
+      const row = document.createElement('div');
+      row.className = 'row';
 
       const mapButton = document.createElement('button');
-      mapButton.className = 'btn blue';
+      mapButton.className = 'btn primary';
       mapButton.textContent = 'Open Location';
-      mapButton.onclick = () => openMap(sr.id);
+      mapButton.onclick = () => openMap(item.id);
 
       const listButton = document.createElement('button');
       listButton.className = 'btn';
       listButton.textContent = 'Shop List';
-      listButton.onclick = () => openList(sr.id);
+      listButton.onclick = () => openList(item.id);
 
-      actions.append(mapButton, listButton);
-      card.append(title, count, actions);
-      root.append(card);
+      row.append(mapButton, listButton);
+      card.append(row);
+      $('cards').append(card);
     });
+
+  if (!$('cards').children.length) {
+    const message = !auth.currentUser
+      ? 'লগইন করলে আপনার সব SR ও দোকান এখানে দেখা যাবে।'
+      : !ready
+        ? 'তথ্য লোড হচ্ছে…'
+        : query
+          ? 'এই নামে SR পাওয়া যায়নি।'
+          : 'প্রথম এলাকা তৈরি করতে + SR add চাপুন।';
+
+    $('cards').innerHTML = `<div class="empty">${message}</div>`;
+  }
+}
+
+function renderMap() {
+  mapLayer.clearLayers();
+
+  if (!sr() || drawing) return;
+
+  const vertices = ring(sr());
+
+  if (vertices.length) {
+    L.polygon(vertices, {
+      color: '#087f72',
+      weight: 3,
+      fillOpacity: .025,
+      dashArray: '9 6',
+      interactive: false
+    }).addTo(mapLayer);
   }
 
-  function openChoices(id) {
-    choice = id;
-    $('choiceTitle').textContent =
-      state.srs.find(sr => sr.id === id)?.name || '';
-    $('srChoices').showModal();
-  }
-
-  function stopGPS() {
-    if (watch !== null) {
-      navigator.geolocation.clearWatch(watch);
-      watch = null;
-    }
-
-    if (myMarker) {
-      map.removeLayer(myMarker);
-      myMarker = null;
-    }
-
-    myPos = null;
-    focused = false;
-  }
-
-  function gps(center = true) {
-    if (!navigator.geolocation || !isSecureContext) {
-      toast('লোকেশনের জন্য HTTPS বা localhost লাগবে');
-      return;
-    }
-
-    if (watch !== null) {
-      if (center && myPos) map.setView(myPos, 17);
-      return;
-    }
-
-    focused = !center;
-    toast('লোকেশন লোড হচ্ছে…');
-
-    watch = navigator.geolocation.watchPosition(
-      position => {
-        myPos = [
-          position.coords.latitude,
-          position.coords.longitude
-        ];
-
-        if (myMarker) {
-          myMarker.setLatLng(myPos);
-        } else {
-          myMarker = L.circleMarker(myPos, {
-            radius: 9,
-            weight: 3,
-            color: 'white',
-            fillColor: '#246af3',
-            fillOpacity: 1
-          }).addTo(map).bindPopup('আপনার লোকেশন');
-        }
-
-        if (!focused) {
-          map.setView(myPos, 17);
-          focused = true;
-        }
-
-        toast('');
-      },
-      error => {
-        if (watch !== null) {
-          navigator.geolocation.clearWatch(watch);
-          watch = null;
-        }
-
-        toast(
-          error.code === 1
-            ? 'লোকেশন অনুমতি দিন'
-            : 'লোকেশন পাওয়া যায়নি'
-        );
-      },
+  shops(sr()).forEach(shop => {
+    const marker = L.marker(
+      [shop.lat, shop.lng],
       {
-        enableHighAccuracy: true,
-        maximumAge: 3000,
-        timeout: 15000
-      }
-    );
-  }
-
-  function clearRoute() {
-    if (route) {
-      map.removeLayer(route);
-      route = null;
-    }
-  }
-
-  function renderMap() {
-    mapLayer.clearLayers();
-    labelMarkers = [];
-
-    const sr = activeSR();
-    if (!sr) return;
-
-    const boundary = ring(sr);
-
-    L.polygon(
-      [
-        [[-85, -180], [-85, 180], [85, 180], [85, -180]],
-        boundary
-      ],
-      {
-        weight: 0,
-        fillColor: '#122a50',
-        fillOpacity: .45,
-        fillRule: 'evenodd',
-        interactive: false
+        icon: L.divIcon({
+          className: 'pin',
+          html:
+            `<span><b>${Number(shop.srSerial) || '•'}</b></span>`,
+          iconSize: [32, 38],
+          iconAnchor: [16, 36]
+        })
       }
     ).addTo(mapLayer);
 
-    L.polygon(boundary, {
-      color: '#1ebd9b',
-      weight: 4,
-      fillColor: '#26d0a7',
-      fillOpacity: .11,
-      interactive: false
-    }).addTo(mapLayer);
-
-    sr.shops.forEach(shop => {
-      const marker = L.marker([shop.lat, shop.lng])
-        .addTo(mapLayer);
-
-      marker.on('click', () => viewShop(shop.id));
-
-      const label = L.marker(
-        [shop.lat, shop.lng],
-        {
-          icon: L.divIcon({
-            className: 'labelIcon',
-            html:
-              `<div class="shopLabel">` +
-              `${escapeHTML(shop.name)}</div>`,
-            iconSize: [155, 35],
-            iconAnchor: [-12, 42]
-          })
-        }
-      );
-
-      label.on('click', () => viewShop(shop.id));
-      labelMarkers.push(label);
+    marker.bindTooltip(esc(shop.name), {
+      permanent: map.getZoom() >= 16,
+      direction: 'right',
+      offset: [12, -20],
+      className: 'shopLabel'
     });
 
-    updateLabels();
+    marker.on('click', () => viewShop(shop.id));
+  });
+
+  $('mapTitle').textContent = sr().name;
+  $('mapSub').textContent =
+    shops(sr()).length + 'টি দোকান · রাস্তার নাম দেখতে জুম করুন';
+}
+
+map.on('zoomend', () => {
+  if (mode === 'map' && !drawing) renderMap();
+});
+
+function clearRoute() {
+  routeController?.abort();
+  routeController = null;
+
+  if (route) {
+    map.removeLayer(route);
+    route = null;
+  }
+}
+
+function stopGPS() {
+  if (watch !== null) {
+    navigator.geolocation?.clearWatch(watch);
   }
 
-  function updateLabels() {
-    labelMarkers.forEach(label => {
-      if (map.getZoom() >= 16) {
-        if (!mapLayer.hasLayer(label)) {
-          mapLayer.addLayer(label);
-        }
-      } else if (mapLayer.hasLayer(label)) {
-        mapLayer.removeLayer(label);
-      }
-    });
+  watch = null;
+  myPos = null;
+  centerNext = false;
+
+  if (myMarker) map.removeLayer(myMarker);
+  if (accuracy) map.removeLayer(accuracy);
+
+  myMarker = null;
+  accuracy = null;
+}
+
+function gps(center = true) {
+  if (!navigator.geolocation || !isSecureContext) {
+    toast('লাইভ লোকেশনের জন্য HTTPS বা localhost-এ চালান।');
+    return;
   }
 
-  map.on('zoomend', updateLabels);
+  centerNext = center;
 
-  function openMap(id) {
-    current = id;
-    clearRoute();
-    $('sheet').hidden = true;
-    $('mapTitle').textContent = activeSR().name;
-
-    show('map');
-    renderMap();
-
-    setTimeout(() => {
-      map.fitBounds(
-        L.latLngBounds(ring(activeSR())),
-        {
-          padding: [40, 40],
-          maxZoom: 16
-        }
-      );
-    }, 70);
-
-    gps(true);
-  }
-
-  function openList(id) {
-    current = id;
-    stopGPS();
-    show('list');
-    $('listTitle').textContent = activeSR().name;
-    renderList();
-  }
-
-  function renderList() {
-    const root = $('shopList');
-    root.replaceChildren();
-
-    if (!activeSR().shops.length) {
-      const empty = document.createElement('p');
-      empty.className = 'empty';
-      empty.textContent = 'কোনো দোকান নেই';
-      root.append(empty);
+  if (watch !== null) {
+    if (center && myPos) {
+      map.setView(myPos, 17);
+      centerNext = false;
     }
+    return;
+  }
 
-    activeSR().shops.forEach(shop => {
-      const card = document.createElement('div');
+  toast('আপনার লোকেশন লোড হচ্ছে…');
+
+  watch = navigator.geolocation.watchPosition(
+    position => {
+      myPos = [
+        position.coords.latitude,
+        position.coords.longitude
+      ];
+
+      const radius = Math.min(position.coords.accuracy, 2000);
+
+      if (myMarker) {
+        myMarker.setLatLng(myPos);
+        accuracy.setLatLng(myPos).setRadius(radius);
+      } else {
+        accuracy = L.circle(myPos, {
+          radius,
+          weight: 0,
+          fillColor: '#268bf4',
+          fillOpacity: .08,
+          interactive: false
+        }).addTo(map);
+
+        myMarker = L.circleMarker(myPos, {
+          radius: 8,
+          color: '#fff',
+          weight: 3,
+          fillColor: '#237cf4',
+          fillOpacity: 1
+        }).addTo(map).bindTooltip('আপনার লোকেশন');
+      }
+
+      if (centerNext) {
+        map.setView(myPos, 17);
+        centerNext = false;
+      }
+    },
+    error => {
+      stopGPS();
+      toast(
+        error.code === 1
+          ? 'লোকেশন permission দিন।'
+          : 'GPS লোকেশন পাওয়া যায়নি।'
+      );
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 3000,
+      timeout: 15000
+    }
+  );
+}
+
+function openMap(key, shopId = null) {
+  current = key;
+  if (!sr()) return;
+
+  selected = null;
+  shownShop = null;
+  clearRoute();
+  $('sheet').hidden = true;
+
+  show('map');
+  renderMap();
+
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+    if (shopId) viewShop(shopId);
+    else fit();
+  });
+
+  gps(false);
+}
+
+function openList(key) {
+  current = key;
+  if (!sr()) return;
+
+  stopGPS();
+  clearRoute();
+  $('sheet').hidden = true;
+  shownShop = null;
+  $('shopSearch').value = '';
+
+  show('list');
+  renderList();
+}
+
+function renderList() {
+  if (!sr()) return;
+
+  $('listTitle').textContent = sr().name;
+  const query = $('shopSearch').value.trim().toLowerCase();
+
+  $('shopList').replaceChildren();
+
+  shops(sr())
+    .sort((a, b) => a.srSerial - b.srSerial)
+    .filter(shop =>
+      [shop.name, shop.owner, shop.phone].some(value =>
+        String(value).toLowerCase().includes(query)
+      )
+    )
+    .forEach(shop => {
+      const card = document.createElement('article');
       card.className = 'shopRow';
 
-      if (shop.photo) {
+      if (shop.photo?.startsWith('data:image/')) {
         const image = document.createElement('img');
         image.src = shop.photo;
-        image.alt = '';
+        image.alt = shop.name;
         card.append(image);
       }
 
       const info = document.createElement('div');
+      info.className = 'info';
+
       info.innerHTML =
-        `<span class="numbers">` +
-        `সাইট #${shop.globalSerial} · ` +
-        `SR #${shop.srSerial}</span>` +
-        `<strong>${escapeHTML(shop.name)}</strong>` +
-        `<small>${escapeHTML(shop.owner)} · ` +
-        `${escapeHTML(shop.phone)}</small>`;
+        `<span class="serial">সাইট #${Number(shop.globalSerial)}` +
+        ` · SR #${Number(shop.srSerial)}</span>` +
+        `<strong>${esc(shop.name)}</strong>` +
+        `<small>${esc(shop.owner)} · ${esc(shop.phone)}</small>`;
 
       const button = document.createElement('button');
       button.className = 'btn';
       button.textContent = 'View';
-
-      button.onclick = () => {
-        openMap(current);
-        map.setView([shop.lat, shop.lng], 17);
-        viewShop(shop.id);
-      };
+      button.onclick = () => openMap(current, shop.id);
 
       card.append(info, button);
-      root.append(card);
+      $('shopList').append(card);
     });
+
+  if (!$('shopList').children.length) {
+    $('shopList').innerHTML =
+      '<div class="empty">কোনো দোকান পাওয়া যায়নি।</div>';
   }
+}
 
-  function viewShop(id) {
-    const shop =
-      activeSR()?.shops.find(item => item.id === id);
+function viewShop(key, recenter = true) {
+  const shop = sr()?.shops?.[key];
+  if (!shop) return;
 
-    if (!shop) return;
+  shownShop = key;
 
+  if (recenter) {
     map.setView(
       [shop.lat, shop.lng],
-      Math.max(16, map.getZoom())
+      Math.max(17, map.getZoom())
     );
-
-    const sheet = $('sheet');
-    sheet.replaceChildren();
-
-    const heading = document.createElement('div');
-    heading.className = 'sheetHero';
-
-    const info = document.createElement('div');
-    info.innerHTML =
-      `<span class="numbers">` +
-      `সাইট #${shop.globalSerial} · ` +
-      `SR #${shop.srSerial}</span>` +
-      `<h2>${escapeHTML(shop.name)}</h2>` +
-      `<p>${escapeHTML(shop.owner)}</p>`;
-
-    const close = document.createElement('button');
-    close.className = 'icon';
-    close.textContent = '×';
-    close.onclick = () => sheet.hidden = true;
-
-    heading.append(info, close);
-    sheet.append(heading);
-
-    if (shop.photo) {
-      const image = document.createElement('img');
-      image.src = shop.photo;
-      image.alt = shop.name;
-      sheet.append(image);
-    }
-
-    const phone = document.createElement('p');
-    phone.textContent = 'মোবাইল: ' + shop.phone;
-    sheet.append(phone);
-
-    const actions = document.createElement('div');
-    actions.className = 'sheetActions';
-
-    const destination = document.createElement('button');
-    destination.className = 'btn blue';
-    destination.textContent = 'Destination';
-    destination.onclick = () => directions(shop);
-
-    const google = document.createElement('button');
-    google.className = 'btn';
-    google.textContent = 'Google Maps';
-
-    google.onclick = () => {
-      window.open(
-        'https://www.google.com/maps/dir/?api=1&destination=' +
-        encodeURIComponent(shop.lat + ',' + shop.lng) +
-        '&travelmode=driving&dir_action=navigate',
-        '_blank',
-        'noopener'
-      );
-    };
-
-    const call = document.createElement('a');
-    call.className = 'btn';
-    call.href =
-      'tel:' + shop.phone.replace(/[^+\d]/g, '');
-    call.textContent = 'Call';
-
-    const remove = document.createElement('button');
-    remove.className = 'btn pink';
-    remove.textContent = 'মুছুন';
-
-    remove.onclick = () => {
-      if (!confirm('দোকানটি মুছবেন?')) return;
-
-      activeSR().shops =
-        activeSR().shops.filter(item => item.id !== id);
-
-      save();
-      sheet.hidden = true;
-      clearRoute();
-      renderMap();
-      renderCards();
-    };
-
-    actions.append(destination, google, call, remove);
-    sheet.append(actions);
-    sheet.hidden = false;
   }
 
-  async function directions(shop) {
-    if (!myPos) {
-      gps(true);
-      toast('লোকেশন লোড হলে আবার Destination চাপুন');
-      return;
-    }
+  const sheet = $('sheet');
 
-    clearRoute();
-    toast('রুট লোড হচ্ছে…');
+  sheet.innerHTML =
+    '<div class="sheetHead"><div>' +
+    `<span class="serial">সাইট #${Number(shop.globalSerial)}` +
+    ` · SR #${Number(shop.srSerial)}</span>` +
+    `<h2>${esc(shop.name)}</h2>` +
+    `<p>${esc(shop.owner)}</p>` +
+    '</div>' +
+    '<button id="closeSheet" class="icon" aria-label="বন্ধ">×</button>' +
+    '</div>';
+
+  if (shop.photo?.startsWith('data:image/')) {
+    const image = document.createElement('img');
+    image.src = shop.photo;
+    image.alt = shop.name;
+    sheet.append(image);
+  }
+
+  const phone = document.createElement('p');
+  phone.textContent = 'মোবাইল: ' + shop.phone;
+  sheet.append(phone);
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  const destination = document.createElement('button');
+  destination.className = 'btn primary';
+  destination.textContent = 'Destination';
+  destination.onclick = () => directions(shop);
+
+  const google = document.createElement('a');
+  google.className = 'btn';
+  google.textContent = 'Google Maps ↗';
+  google.href =
+    'https://www.google.com/maps/dir/?api=1&destination=' +
+    encodeURIComponent(shop.lat + ',' + shop.lng) +
+    '&travelmode=driving&dir_action=navigate';
+  google.target = '_blank';
+  google.rel = 'noopener';
+
+  const call = document.createElement('a');
+  call.className = 'btn';
+  call.textContent = 'Call';
+  call.href = 'tel:' + shop.phone.replace(/[^+\d]/g, '');
+
+  const remove = document.createElement('button');
+  remove.className = 'btn danger';
+  remove.textContent = 'মুছুন';
+  remove.dataset.write = '';
+
+  const srId = current;
+
+  remove.onclick = async () => {
+    if (!confirm('এই দোকানটি মুছবেন?')) return;
 
     try {
-      const url =
-        `https://router.project-osrm.org/route/v1/driving/` +
-        `${myPos[1]},${myPos[0]};` +
-        `${shop.lng},${shop.lat}` +
-        `?overview=full&geometries=geojson`;
-
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (
-        !response.ok ||
-        result.code !== 'Ok' ||
-        !result.routes?.length
-      ) {
-        throw Error('Route unavailable');
-      }
-
-      const coordinates =
-        result.routes[0].geometry.coordinates.map(
-          ([lng, lat]) => [lat, lng]
-        );
-
-      route = L.polyline(coordinates, {
-        color: '#246af3',
-        weight: 6
-      }).addTo(map);
-
-      $('sheet').hidden = true;
-      map.fitBounds(
-        route.getBounds(),
-        {padding: [65, 45]}
-      );
-
-      toast(
-        (result.routes[0].distance / 1000).toFixed(1) +
-        ' কিমি · ' +
-        Math.round(result.routes[0].duration / 60) +
-        ' মিনিট'
-      );
-    } catch {
-      toast('রুট পাওয়া যায়নি; Google Maps চাপুন');
-    }
-  }
-
-  // প্রতিটি কোণায় একটি করে টেনে সরানো যায় এমন বৃত্ত
-  function renderDrawing() {
-    drawLayer.clearLayers();
-    handles = [];
-
-    if (!points.length) return;
-
-    areaPoly = L.polyline(
-      [...points, points[0]],
-      {
-        color: '#ff6437',
-        weight: 4,
-        interactive: false
-      }
-    ).addTo(drawLayer);
-
-    points.forEach((point, index) => {
-      const handle = L.marker(
-        point,
-        {
-          draggable: !zooming,
-          autoPan: true,
-          bubblingMouseEvents: false,
-          icon: L.divIcon({
-            className:
-              'vertex' +
-              (selectedCorner === index ? ' active' : ''),
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
-          })
+      await mutate(data => {
+        if (data.srs[srId]?.shops) {
+          delete data.srs[srId].shops[key];
         }
-      ).addTo(drawLayer);
-
-      handle.on('drag', () => {
-        points[index] = [
-          handle.getLatLng().lat,
-          handle.getLatLng().lng
-        ];
-
-        areaPoly.setLatLngs([
-          ...points,
-          points[0]
-        ]);
       });
 
-      handle.on('dragend', () => {
-        points[index] = [
-          handle.getLatLng().lat,
-          handle.getLatLng().lng
-        ];
-        renderDrawing();
-      });
+      shownShop = null;
+      sheet.hidden = true;
+      clearRoute();
+    } catch (error) {
+      toast(errorText(error));
+    }
+  };
 
-      handle.on('click', event => {
-        L.DomEvent.stopPropagation(event);
+  actions.append(destination, google, call, remove);
+  sheet.append(actions);
+  sheet.hidden = false;
 
-        if (zooming) return;
+  $('closeSheet').onclick = () => {
+    sheet.hidden = true;
+    shownShop = null;
+  };
 
-        selectedCorner = index;
-        renderDrawing();
-        toast('এই বৃত্ত টেনে সরান অথবা কোণা মুছুন');
-      });
+  syncStatus();
+}
 
-      handles.push(handle);
+async function directions(shop) {
+  if (!myPos) {
+    gps(true);
+    toast('লোকেশন লোড হলে আবার Destination চাপুন।');
+    return;
+  }
+
+  clearRoute();
+
+  const controller = new AbortController();
+  routeController = controller;
+
+  const timer = setTimeout(() => controller.abort(), 15000);
+  toast('রাস্তা অনুযায়ী রুট লোড হচ্ছে…');
+
+  try {
+    const url =
+      'https://router.project-osrm.org/route/v1/driving/' +
+      `${myPos[1]},${myPos[0]};${shop.lng},${shop.lat}` +
+      '?overview=full&geometries=geojson';
+
+    const response = await fetch(url, {
+      signal: controller.signal
     });
-  }
 
-  // জুম বাটন চালু থাকলে ম্যাপ নড়বে, বন্ধ থাকলে বৃত্ত নড়বে
-  function setZoom(on) {
-    zooming = on;
-    addingCorner = false;
+    const result = await response.json();
 
-    $('zoomToggle').textContent = on
-      ? '🔎 জুম / সরান: চালু'
-      : '🔎 জুম / সরান: বন্ধ';
-
-    $('zoomToggle').classList.toggle('selected', on);
-    $('addCorner').disabled = on;
-    $('removeCorner').disabled = on;
-
-    if (on) {
-      map.dragging.enable();
-      map.touchZoom.enable();
-      map.doubleClickZoom.enable();
-      toast('এখন ম্যাপ জুম ও সরান');
-    } else {
-      map.dragging.disable();
-      map.touchZoom.disable();
-      map.doubleClickZoom.disable();
-      toast('কমলা বৃত্ত টেনে সীমানা ঠিক করুন');
-    }
-
-    handles.forEach(handle => {
-      if (on) handle.dragging.disable();
-      else handle.dragging.enable();
-    });
-  }
-
-  function startArea(name, existing = null) {
-    stopGPS();
-    clearRoute();
-
-    editingArea = existing;
-    points = existing
-      ? ring(existing).map(point => [...point])
-      : [];
-
-    selectedCorner = -1;
-    current = null;
-    $('mapTitle').textContent = name;
-    $('sheet').hidden = true;
-    $('bottom').hidden = true;
-    $('menu').hidden = true;
-    $('locate').hidden = true;
-
-    show('map');
-    $('drawbar').classList.add('on');
-
-    zooming = false;
-    renderDrawing();
-    setZoom(false);
-
-    if (!existing) {
-      toast('প্রথম কোণা দিতে + কোণা চাপুন');
-    }
-
-    setTimeout(() => {
-      map.invalidateSize();
-
-      if (existing) {
-        map.fitBounds(
-          L.latLngBounds(points),
-          {padding: [50, 50]}
-        );
-      }
-    }, 60);
-  }
-
-  function endArea() {
-    editingArea = null;
-    $('drawbar').classList.remove('on');
-    $('bottom').hidden = false;
-    $('menu').hidden = false;
-    $('locate').hidden = false;
-
-    map.dragging.enable();
-    map.touchZoom.enable();
-    map.doubleClickZoom.enable();
-
-    drawLayer.clearLayers();
-    points = [];
-    selectedCorner = -1;
-    addingCorner = false;
-    toast('');
-  }
-
-  $('zoomToggle').onclick = () => {
-    setZoom(!zooming);
-  };
-
-  $('addCorner').onclick = () => {
-    if (zooming) return;
-
-    addingCorner = true;
-    selectedCorner = -1;
-    renderDrawing();
-    toast('ম্যাপে নতুন কোণার জায়গায় একবার ট্যাপ করুন');
-  };
-
-  $('removeCorner').onclick = () => {
-    if (zooming) return;
-
-    if (selectedCorner < 0) {
-      toast('আগে একটি কমলা বৃত্তে ট্যাপ করুন');
-      return;
-    }
-
-    points.splice(selectedCorner, 1);
-    selectedCorner = -1;
-    renderDrawing();
-    toast('কোণা মুছে গেছে');
-  };
-
-  $('saveArea').onclick = () => {
-    if (points.length < 3) {
-      toast('অন্তত ৩টি কোণা দিন');
-      return;
-    }
-
-    let selectedSR = editingArea;
-    const oldPolygon = selectedSR?.polygon;
-
-    if (selectedSR) {
-      selectedSR.polygon = points;
-    } else {
-      selectedSR = {
-        id: makeId(),
-        name: pendingName,
-        polygon: points,
-        shops: [],
-        nextLocal: 1
-      };
-      state.srs.push(selectedSR);
-    }
-
-    if (!save()) {
-      if (editingArea) {
-        editingArea.polygon = oldPolygon;
-      } else {
-        state.srs.pop();
-      }
-      return;
-    }
-
-    endArea();
-    renderCards();
-    openMap(selectedSR.id);
-  };
-
-  // শুধুমাত্র + কোণা চাপার পরে একটি নতুন বৃত্ত তৈরি হবে
-  map.on('click', event => {
     if (
-      !$('drawbar').classList.contains('on') ||
-      zooming ||
-      !addingCorner
+      !response.ok ||
+      result.code !== 'Ok' ||
+      !result.routes?.length
+    ) {
+      throw Error('No route');
+    }
+
+    if (
+      routeController !== controller ||
+      mode !== 'map' ||
+      drawing
     ) return;
 
-    points.push([
-      event.latlng.lat,
-      event.latlng.lng
-    ]);
+    const path = result.routes[0];
 
-    addingCorner = false;
-    selectedCorner = points.length - 1;
-    renderDrawing();
+    route = L.polyline(
+      path.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+      {
+        weight: 6,
+        color: '#237cf4'
+      }
+    ).addTo(map);
+
+    $('sheet').hidden = true;
+    shownShop = null;
+
+    map.fitBounds(route.getBounds(), {
+      paddingTopLeft: [45, 100],
+      paddingBottomRight: [45, 100]
+    });
 
     toast(
-      'বৃত্ত টেনে সরান; আরেকটি কোণার জন্য + কোণা চাপুন'
+      (path.distance / 1000).toFixed(1) +
+      ' কিমি · ' +
+      Math.round(path.duration / 60) +
+      ' মিনিট'
     );
-  });
-
-  map.on('click', event => {
-    if (
-      mode !== 'map' ||
-      $('drawbar').classList.contains('on')
-    ) return;
-
-    selected = event.latlng;
-
-    if (!inside(selected, activeSR())) {
-      toast('SR এলাকার বাইরে');
-      return;
+  } catch (error) {
+    if (routeController === controller) {
+      toast('রুট পাওয়া যায়নি। Google Maps বাটন ব্যবহার করুন।');
     }
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
-    L.popup()
-      .setLatLng(selected)
-      .setContent(
-        '<button id="popupAdd">+ দোকান যোগ</button>'
-      )
-      .openOn(map);
-  });
+function renderAll() {
+  renderCards();
 
-  map.on('popupopen', event => {
-    const button =
-      event.popup.getElement()?.querySelector('#popupAdd');
-
-    if (button) button.onclick = openShopForm;
-  });
-
-  function openShopForm() {
-    if (!selected || !inside(selected, activeSR())) {
-      toast('এলাকার ভেতরে ম্যাপে জায়গা বেছে নিন');
-      return;
-    }
-
-    map.closePopup();
-    $('shopForm').reset();
-    $('shopDialog').showModal();
+  if (current && !sr() && !drawing) {
+    stopGPS();
+    clearRoute();
+    show('home');
+    current = null;
+    shownShop = null;
+    $('sheet').hidden = true;
   }
 
-  function photoData(file) {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        resolve('');
-        return;
+  if (mode === 'list') renderList();
+
+  if (mode === 'map' && !drawing) {
+    renderMap();
+
+    if (shownShop) {
+      if (sr()?.shops?.[shownShop]) {
+        viewShop(shownShop, false);
+      } else {
+        $('sheet').hidden = true;
+        shownShop = null;
+        clearRoute();
       }
+    }
+  }
+}
 
-      const image = new Image();
-      const url = URL.createObjectURL(file);
+function setZoom(on) {
+  zooming = on;
+  addingCorner = false;
 
-      image.onload = () => {
+  $('zoomToggle').textContent =
+    'জুম / সরান: ' + (on ? 'চালু' : 'বন্ধ');
+
+  $('zoomToggle').classList.toggle('selected', on);
+  $('addCorner').disabled = on;
+  $('removeCorner').disabled = on;
+
+  [
+    'dragging',
+    'touchZoom',
+    'doubleClickZoom',
+    'scrollWheelZoom',
+    'boxZoom',
+    'keyboard'
+  ].forEach(key => {
+    map[key]?.[on ? 'enable' : 'disable']();
+  });
+
+  handles.forEach(handle => {
+    handle.dragging[on ? 'disable' : 'enable']();
+  });
+
+  toast(
+    on
+      ? 'ম্যাপ জুম বা সরান।'
+      : 'কমলা বৃত্ত টেনে সীমানা ঠিক করুন।'
+  );
+}
+
+function renderDrawing() {
+  drawLayer.clearLayers();
+  handles = [];
+  areaPoly = null;
+
+  if (!points.length) return;
+
+  areaPoly = L.polyline(
+    points.length > 2 ? [...points, points[0]] : points,
+    {
+      color: '#f16b38',
+      weight: 4,
+      interactive: false
+    }
+  ).addTo(drawLayer);
+
+  points.forEach((point, index) => {
+    const handle = L.marker(point, {
+      draggable: !zooming,
+      autoPan: true,
+      bubblingMouseEvents: false,
+      icon: L.divIcon({
+        className:
+          'vertex' + (index === selectedCorner ? ' active' : ''),
+        iconSize: [25, 25],
+        iconAnchor: [12, 12]
+      })
+    }).addTo(drawLayer);
+
+    handle.on('drag', () => {
+      const location = handle.getLatLng();
+
+      points[index] = [location.lat, location.lng];
+
+      areaPoly.setLatLngs(
+        points.length > 2 ? [...points, points[0]] : points
+      );
+    });
+
+    handle.on('dragend', renderDrawing);
+
+    handle.on('click', () => {
+      if (zooming) return;
+      selectedCorner = index;
+      renderDrawing();
+    });
+
+    handles.push(handle);
+  });
+}
+
+function startArea(name, existing = null) {
+  stopGPS();
+  clearRoute();
+
+  drawing = true;
+  editingArea = existing
+    ? {id: existing.id, polygon: clone(ring(existing))}
+    : null;
+
+  pendingName = name;
+  points = existing ? clone(ring(existing)) : [];
+  selectedCorner = -1;
+  selected = null;
+  shownShop = null;
+
+  map.closePopup();
+  mapLayer.clearLayers();
+
+  $('sheet').hidden = true;
+  $('bottom').hidden = true;
+  $('menu').hidden = true;
+  $('locate').hidden = true;
+  $('drawbar').hidden = false;
+
+  $('mapTitle').textContent = name;
+  $('mapSub').textContent = 'সীমানা ঠিক করুন · অন্তত ৩টি কোণা';
+
+  show('map');
+  renderDrawing();
+  setZoom(false);
+
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+    fit();
+  });
+
+  if (!existing) {
+    toast('প্রথম কোণা দিতে + কোণা চাপুন।');
+  }
+}
+
+function endArea() {
+  drawing = false;
+  editingArea = null;
+  points = [];
+  selectedCorner = -1;
+  addingCorner = false;
+
+  drawLayer.clearLayers();
+
+  $('bottom').hidden = false;
+  $('menu').hidden = false;
+  $('locate').hidden = false;
+  $('drawbar').hidden = true;
+
+  [
+    'dragging',
+    'touchZoom',
+    'doubleClickZoom',
+    'scrollWheelZoom',
+    'boxZoom',
+    'keyboard'
+  ].forEach(key => map[key]?.enable());
+
+  toast('');
+}
+
+$('zoomToggle').onclick = () => setZoom(!zooming);
+
+$('addCorner').onclick = () => {
+  if (zooming) return;
+
+  addingCorner = true;
+  selectedCorner = -1;
+  renderDrawing();
+  toast('নতুন কোণার জায়গায় ম্যাপে ট্যাপ করুন।');
+};
+
+$('removeCorner').onclick = () => {
+  if (zooming) return;
+
+  if (selectedCorner < 0) {
+    toast('আগে একটি কমলা বৃত্ত নির্বাচন করুন।');
+    return;
+  }
+
+  points.splice(selectedCorner, 1);
+  selectedCorner = -1;
+  renderDrawing();
+};
+
+$('saveArea').onclick = async () => {
+  if (!validRing(points) || selfCross(points)) {
+    toast('অন্তত ৩টি পৃথক কোণা দিয়ে পরস্পর না-কাটা সীমানা দিন।');
+    return;
+  }
+
+  const polygon = clone(points);
+  const edit = editingArea;
+  const key = edit?.id || id();
+  const name = pendingName;
+
+  try {
+    await mutate(data => {
+      if (edit) {
+        const item = data.srs[key];
+
+        if (!item) throw Error('SR আর নেই।');
+
+        if (
+          JSON.stringify(ring(item)) !==
+          JSON.stringify(edit.polygon)
+        ) {
+          throw Error(
+            'অন্য কেউ সীমানা বদলেছেন। বাতিল করে আবার খুলুন।'
+          );
+        }
+
+        item.polygon = polygon;
+      } else {
+        data.srs[key] = {
+          id: key,
+          name,
+          polygon,
+          nextLocal: 1,
+          shops: {}
+        };
+      }
+    });
+
+    endArea();
+    openMap(key);
+  } catch (error) {
+    toast(errorText(error));
+  }
+};
+
+$('cancelArea').onclick = () => {
+  const key = editingArea?.id;
+  endArea();
+
+  if (key && state.srs[key]) {
+    openMap(key);
+  } else {
+    show('home');
+    renderCards();
+  }
+};
+
+map.on('click', event => {
+  if (drawing) {
+    if (!zooming && addingCorner) {
+      points.push([event.latlng.lat, event.latlng.lng]);
+      addingCorner = false;
+      selectedCorner = points.length - 1;
+      renderDrawing();
+
+      toast(
+        'বৃত্ত টেনে সরান। আরেকটি কোণার জন্য + কোণা চাপুন।'
+      );
+    }
+    return;
+  }
+
+  if (mode !== 'map' || !sr()) return;
+
+  selected = event.latlng;
+
+  if (!inside(selected, sr())) {
+    selected = null;
+    toast('দোকান যোগ করতে SR এলাকার ভেতরে ট্যাপ করুন।');
+    return;
+  }
+
+  const button = document.createElement('button');
+  button.className = 'btn primary';
+  button.textContent = '+ দোকান যোগ';
+  button.onclick = openShopForm;
+
+  L.popup()
+    .setLatLng(selected)
+    .setContent(button)
+    .openOn(map);
+});
+
+function openShopForm() {
+  if (
+    !selected &&
+    myPos &&
+    inside({lat: myPos[0], lng: myPos[1]}, sr())
+  ) {
+    selected = L.latLng(myPos);
+  }
+
+  if (!selected || !inside(selected, sr())) {
+    toast('এলাকার ভেতরে দোকানের জায়গায় ম্যাপে ট্যাপ করুন।');
+    return;
+  }
+
+  if (!ready || !connected || !allowed) {
+    toast('লগইন ও Firebase সংযোগ পরীক্ষা করুন।');
+    return;
+  }
+
+  map.closePopup();
+  $('shopForm').reset();
+  $('shopError').textContent = '';
+  $('shopDialog').showModal();
+}
+
+async function photoData(file) {
+  if (!file) return '';
+
+  if (file.size > 20 * 1024 * 1024) {
+    throw Error('ছবিটি ২০ MB-এর নিচে দিন।');
+  }
+
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+
+    image.onload = () => {
+      try {
         const scale = Math.min(
           1,
-          650 / Math.max(image.width, image.height)
+          640 / Math.max(image.width, image.height)
         );
 
         const canvas = document.createElement('canvas');
-        canvas.width = Math.round(image.width * scale);
-        canvas.height = Math.round(image.height * scale);
 
-        canvas.getContext('2d').drawImage(
-          image,
-          0,
-          0,
-          canvas.width,
-          canvas.height
+        canvas.width = Math.max(
+          1,
+          Math.round(image.width * scale)
         );
 
+        canvas.height = Math.max(
+          1,
+          Math.round(image.height * scale)
+        );
+
+        const context = canvas.getContext('2d');
+        context.fillStyle = 'white';
+
+        context.fillRect(
+          0, 0, canvas.width, canvas.height
+        );
+
+        context.drawImage(
+          image, 0, 0, canvas.width, canvas.height
+        );
+
+        resolve(canvas.toDataURL('image/jpeg', .68));
+      } catch {
+        reject(Error('ছবিটি পড়া যায়নি।'));
+      } finally {
         URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL('image/jpeg', .65));
-      };
-
-      image.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(Error('Image unavailable'));
-      };
-
-      image.src = url;
-    });
-  }
-
-  $('shopForm').onsubmit = async event => {
-    event.preventDefault();
-
-    if (
-      !selected ||
-      !inside(selected, activeSR())
-    ) return;
-
-    let photo = '';
-
-    try {
-      photo = await photoData($('photo').files[0]);
-    } catch {
-      alert('ছবিটি পড়া যায়নি');
-      return;
-    }
-
-    const selectedSR = activeSR();
-
-    const shop = {
-      id: makeId(),
-      name: $('shopName').value.trim(),
-      owner: $('owner').value.trim(),
-      phone: $('phone').value.trim(),
-      lat: selected.lat,
-      lng: selected.lng,
-      photo,
-      globalSerial: state.nextGlobal++,
-      srSerial: selectedSR.nextLocal++
+      }
     };
 
-    selectedSR.shops.push(shop);
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(Error('ছবিটি পড়া যায়নি। JPG বা PNG ব্যবহার করুন।'));
+    };
 
-    if (!save()) {
-      selectedSR.shops.pop();
-      state.nextGlobal--;
-      selectedSR.nextLocal--;
+    image.src = url;
+  });
+}
+
+$('shopForm').onsubmit = async event => {
+  event.preventDefault();
+  if (preparingShop) return;
+
+  const srId = current;
+  const position = selected
+    ? {lat: selected.lat, lng: selected.lng}
+    : null;
+
+  const name = $('shopName').value.trim();
+  const owner = $('owner').value.trim();
+  const phone = $('phone').value.trim();
+  const file = $('photo').files[0];
+
+  if (!name || !owner || !phone) {
+    $('shopError').textContent = 'সব প্রয়োজনীয় ঘর পূরণ করুন।';
+    return;
+  }
+
+  if (!position) return;
+
+  preparingShop = true;
+  $('shopForm').querySelector('button.primary').disabled = true;
+
+  try {
+    const photo = await photoData(file);
+    const key = id();
+
+    await mutate(data => {
+      const item = data.srs[srId];
+
+      if (!item || !inside(position, item)) {
+        throw Error(
+          'সীমানা বদলেছে বা দোকানের অবস্থান এলাকার বাইরে।'
+        );
+      }
+
+      item.shops ||= {};
+      item.nextLocal = Math.max(1, Number(item.nextLocal) || 1);
+
+      item.shops[key] = {
+        id: key,
+        name,
+        owner,
+        phone,
+        ...position,
+        photo,
+        globalSerial: data.nextGlobal++,
+        srSerial: item.nextLocal++
+      };
+    });
+
+    $('shopDialog').close();
+    viewShop(key);
+  } catch (error) {
+    $('shopError').textContent = errorText(error);
+  } finally {
+    preparingShop = false;
+    syncStatus();
+  }
+};
+
+$('newSR').onclick = () => {
+  editingName = null;
+  $('nameTitle').textContent = 'নতুন SR';
+  $('nameForm').reset();
+  $('nameDialog').showModal();
+};
+
+$('nameForm').onsubmit = async event => {
+  event.preventDefault();
+
+  const name = $('srName').value.trim();
+  if (!name) return;
+
+  const key = editingName;
+
+  if (!key) {
+    $('nameDialog').close();
+    startArea(name);
+    return;
+  }
+
+  try {
+    await mutate(data => {
+      if (!data.srs[key]) throw Error('SR আর নেই।');
+      data.srs[key].name = name;
+    });
+
+    $('nameDialog').close();
+    editingName = null;
+  } catch (error) {
+    toast(errorText(error));
+  }
+};
+
+$('menu').onclick = () => {
+  if (!sr()) return;
+  $('editTitle').textContent = sr().name;
+  $('editDialog').showModal();
+};
+
+$('renameSR').onclick = () => {
+  editingName = current;
+  $('editDialog').close();
+  $('nameTitle').textContent = 'SR-এর নাম পরিবর্তন';
+  $('srName').value = sr().name;
+  $('nameDialog').showModal();
+};
+
+$('editDistance').onclick = () => {
+  $('editDialog').close();
+  startArea(sr().name, sr());
+};
+
+$('locate').onclick = () => gps(true);
+$('fit').onclick = fit;
+$('addShop').onclick = openShopForm;
+$('shopListBtn').onclick = () => openList(current);
+$('listMap').onclick = () => openMap(current);
+$('listBack').onclick = () => show('home');
+
+$('mapBack').onclick = () => {
+  if (busy) {
+    toast('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
+    return;
+  }
+
+  if (drawing) endArea();
+
+  stopGPS();
+  clearRoute();
+  map.closePopup();
+
+  selected = null;
+  shownShop = null;
+  $('sheet').hidden = true;
+
+  show('home');
+  renderCards();
+};
+
+$('srSearch').oninput = renderCards;
+$('shopSearch').oninput = renderList;
+
+$('help').onclick = () => $('helpDialog').showModal();
+
+$('account').onclick = async () => {
+  if (auth.currentUser) {
+    if (!confirm('লগআউট করবেন?')) return;
+
+    try {
+      await signOut(auth);
+    } catch (error) {
+      toast(errorText(error));
+    }
+  } else {
+    $('loginError').textContent = '';
+    $('loginDialog').showModal();
+  }
+};
+
+$('loginForm').onsubmit = async event => {
+  event.preventDefault();
+
+  $('loginSubmit').disabled = true;
+  $('loginError').textContent = '';
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      $('email').value.trim(),
+      $('password').value
+    );
+
+    $('password').value = '';
+    $('loginDialog').close();
+  } catch (error) {
+    $('loginError').textContent = errorText(error);
+  } finally {
+    $('loginSubmit').disabled = false;
+  }
+};
+
+document.querySelectorAll('[data-close]').forEach(button => {
+  button.onclick = () => {
+    if (busy || preparingShop) {
+      toast('সংরক্ষণ শেষ হওয়া পর্যন্ত অপেক্ষা করুন।');
       return;
     }
 
-    $('shopDialog').close();
-    renderMap();
-    renderCards();
-    viewShop(shop.id);
+    $(button.dataset.close).close();
   };
+});
 
-  $('newSR').onclick = () => {
-    editingName = null;
-    $('nameTitle').textContent = 'নতুন SR';
-    $('nameForm').reset();
-    $('nameDialog').showModal();
-  };
+document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('cancel', event => {
+    if (busy || preparingShop) event.preventDefault();
+  });
+});
 
-  $('nameForm').onsubmit = event => {
-    event.preventDefault();
+onValue(ref(db, '.info/connected'), snapshot => {
+  connected = snapshot.val() === true;
+  syncStatus();
+});
 
-    const name = $('srName').value.trim();
-    if (!name) return;
+onAuthStateChanged(auth, user => {
+  unsubscribe?.();
+  memberUnsubscribe?.();
 
-    $('nameDialog').close();
+  unsubscribe = null;
+  memberUnsubscribe = null;
+  ready = false;
+  allowed = false;
+  state = {srs: {}, nextGlobal: 1};
 
-    if (editingName) {
-      editingName.name = name;
-      save();
-      $('mapTitle').textContent = name;
-      renderCards();
-      editingName = null;
-    } else {
-      pendingName = name;
-      startArea(name);
-    }
-  };
+  stopGPS();
+  clearRoute();
 
-  $('choiceMap').onclick = () => {
-    $('srChoices').close();
-    openMap(choice);
-  };
+  if (drawing) endArea();
 
-  $('choiceList').onclick = () => {
-    $('srChoices').close();
-    openList(choice);
-  };
+  current = null;
+  shownShop = null;
+  $('sheet').hidden = true;
 
-  $('choiceEdit').onclick = () => {
-    $('srChoices').close();
-    current = choice;
-    $('editChoices').showModal();
-  };
+  mapLayer.clearLayers();
+  drawLayer.clearLayers();
+  map.closePopup();
 
-  $('menu').onclick = () => {
-    $('editChoices').showModal();
-  };
+  show('home');
 
-  $('renameSR').onclick = () => {
-    editingName = activeSR();
-    $('editChoices').close();
-    $('nameTitle').textContent = 'SR-এর নাম পরিবর্তন';
-    $('srName').value = editingName.name;
-    $('nameDialog').showModal();
-  };
-
-  $('editDistance').onclick = () => {
-    const selectedSR = activeSR();
-    $('editChoices').close();
-    startArea(selectedSR.name, selectedSR);
-  };
-
-  $('locate').onclick = () => {
-    if (myPos) map.setView(myPos, 17);
-    else gps(true);
-  };
-
-  $('addShop').onclick = openShopForm;
-  $('shopListBtn').onclick = () => openList(current);
-  $('listMap').onclick = () => openMap(current);
-
-  $('listBack').onclick = () => {
-    show('home');
-    renderCards();
-  };
-
-  $('mapBack').onclick = () => {
-    if ($('drawbar').classList.contains('on')) {
-      endArea();
-    }
-
-    stopGPS();
-    clearRoute();
-    $('sheet').hidden = true;
-    show('home');
-    renderCards();
-  };
-
-  document.querySelectorAll('[data-close]').forEach(
-    button => {
-      button.onclick = () => {
-        $(button.dataset.close).close();
-      };
-    }
-  );
+  $('account').textContent = user ? 'লগআউট' : 'লগইন';
+  $('user').textContent = user?.email || '';
 
   renderCards();
-})();
+  syncStatus();
+
+  if (!user) {
+    document.querySelectorAll('dialog').forEach(dialog => {
+      if (dialog.open) dialog.close();
+    });
+    return;
+  }
+
+  memberUnsubscribe = onValue(
+    ref(db, 'atlasMembers/' + user.uid),
+    snapshot => {
+      allowed = snapshot.val() === true;
+
+      unsubscribe?.();
+      unsubscribe = null;
+      ready = false;
+
+      if (!allowed) {
+        state = {srs: {}, nextGlobal: 1};
+
+        stopGPS();
+        clearRoute();
+
+        if (drawing) endArea();
+
+        show('home');
+        current = null;
+        shownShop = null;
+        $('sheet').hidden = true;
+
+        mapLayer.clearLayers();
+
+        document.querySelectorAll('dialog').forEach(dialog => {
+          if (dialog.open && dialog.id !== 'helpDialog') {
+            dialog.close();
+          }
+        });
+
+        renderCards();
+        syncStatus();
+
+        $('status').textContent = 'অনুমতি নেই — সেটআপ দেখুন';
+
+        toast(
+          'এই UID-কে atlasMembers-এ অনুমতি দিন: ' + user.uid
+        );
+        return;
+      }
+
+      unsubscribe = onValue(
+        atlas,
+        databaseSnapshot => {
+          state = databaseSnapshot.val() ||
+            {srs: {}, nextGlobal: 1};
+
+          state.srs ||= {};
+          ready = true;
+
+          renderAll();
+          syncStatus();
+        },
+        error => {
+          ready = false;
+          syncStatus();
+          $('status').textContent = 'Database Rules পরীক্ষা করুন';
+          toast(errorText(error));
+        }
+      );
+
+      syncStatus();
+    },
+    error => {
+      allowed = false;
+      ready = false;
+      syncStatus();
+      $('status').textContent = 'অনুমতি যাচাই ব্যর্থ';
+      toast(errorText(error));
+    }
+  );
+});
+
+// আগের localStorage ডেটা একবার Firebase-এ আমদানি।
+$('importOld').onclick = async () => {
+  let old;
+
+  try {
+    old = JSON.parse(
+      localStorage.getItem('sr-atlas-v3') ||
+      localStorage.getItem('sr-shop-map-v2') ||
+      'null'
+    );
+  } catch {
+    toast('পুরনো তথ্য পড়া যায়নি।');
+    return;
+  }
+
+  if (!Array.isArray(old?.srs) || !old.srs.length) {
+    toast('এই website origin-এ পুরনো localStorage তথ্য নেই।');
+    return;
+  }
+
+  if (!confirm(
+    'পুরনো ' + old.srs.length +
+    'টি SR আমদানি করবেন? নতুন সিরিয়াল দেওয়া হবে।'
+  )) return;
+
+  try {
+    const prepared = [];
+
+    for (const item of old.srs) {
+      const polygon = ring(item);
+
+      if (!validRing(polygon) || selfCross(polygon)) {
+        throw Error(
+          'পুরনো SR-এর সীমানা সঠিক নয়: ' + item.name
+        );
+      }
+
+      const marker = encodeURIComponent(
+        String(item.id || item.name)
+      ).replace(/\./g, '%2E');
+
+      const records = [];
+
+      for (const shop of item.shops || []) {
+        const lat = Number(shop.lat);
+        const lng = Number(shop.lng);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          throw Error('পুরনো দোকানের অবস্থান সঠিক নয়।');
+        }
+
+        records.push({
+          id: id(),
+          name: String(shop.name || 'দোকান'),
+          owner: String(shop.owner || ''),
+          phone: String(shop.phone || ''),
+          lat,
+          lng,
+          photo:
+            typeof shop.photo === 'string' &&
+            shop.photo.startsWith('data:image/')
+              ? shop.photo
+              : ''
+        });
+      }
+
+      prepared.push({
+        id: id(),
+        name: String(item.name || 'SR'),
+        polygon: clone(polygon),
+        marker,
+        records
+      });
+    }
+
+    await mutate(data => {
+      data.importedLegacy ||= {};
+
+      for (const item of prepared) {
+        if (data.importedLegacy[item.marker]) continue;
+
+        const target = {
+          id: item.id,
+          name: item.name,
+          polygon: item.polygon,
+          nextLocal: 1,
+          shops: {}
+        };
+
+        for (const shop of item.records) {
+          target.shops[shop.id] = {
+            ...shop,
+            globalSerial: data.nextGlobal++,
+            srSerial: target.nextLocal++
+          };
+        }
+
+        data.srs[item.id] = target;
+        data.importedLegacy[item.marker] = true;
+      }
+    });
+  } catch (error) {
+    toast(errorText(error));
+  }
+};
+
+renderCards();
+syncStatus();
 </script>
+
+<script>
+window.addEventListener('error', event => {
+  if (
+    event.message &&
+    /L is not defined|Failed to fetch|Script error/.test(event.message)
+  ) {
+    const status = document.getElementById('status');
+
+    if (status) {
+      status.textContent =
+        'স্ক্রিপ্ট লোড হয়নি — ইন্টারনেট পরীক্ষা করে রিফ্রেশ করুন।';
+    }
+  }
+});
+</script>
+
 </body>
 </html>
